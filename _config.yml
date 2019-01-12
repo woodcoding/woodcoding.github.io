@@ -235,6 +235,7 @@ social_icons:
   GitHub: github
   Twitter: twitter
   Weibo: weibo
+  知乎: quora
 
 
 # Sidebar Avatar
@@ -281,7 +282,7 @@ sidebar:
   offset_float: 0
 
   # Back to top in sidebar
-  b2t: false
+  b2t: true
 
   # Scroll percent label in b2t button
   scrollpercent: false
@@ -336,7 +337,7 @@ post_wordcount:
 
 # Declare license on posts
 post_copyright:
-  enable: false
+  enable: true
   license: CC BY-NC-SA 3.0
   license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
 
