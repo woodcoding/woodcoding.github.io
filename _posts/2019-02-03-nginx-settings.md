@@ -1,5 +1,5 @@
 ---
-title: Ubuntu server 16.04 下的环境配置
+title: Nginx代理工具的配置
 date: 2019-02-03 21:55:00
 categories: 
  - linux
