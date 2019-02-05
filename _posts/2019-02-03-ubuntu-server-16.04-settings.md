@@ -26,6 +26,18 @@ $ sudo apt upgrade
 sudo passwd root
 ```
 
+#### 安装oh-my-zsh
+就是漂亮实用的终端
+```bash
+# 安装oh-my-zsh 
+$ sudo apt install zsh 
+$ wget --no-check-certificate https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+# 替换默认shell为zsh 
+$ chsh -s /bin/zsh
+# 重启 
+$ sudo reboot
+```
+
 #### 安装docker
 docker是一个方便的虚拟化部署运行方案。
 ```bash
@@ -74,10 +86,10 @@ $ sudo pip install --upgrade virtualenv
 # 中途把pip升级搞坏了，这里提供几个解决办法
 
 # ImportError: No module named _internal
-# 强制重装
+# 强制重装（这个比较好用）
 $ wget https://bootstrap.pypa.io/get-pip.py  --no-check-certificate
  
-$ sudo python3 get-pip.py --force-reinstall
+$ sudo python get-pip.py --force-reinstall
 
 # 强制升级
 $ sudo -H python -m pip install --upgrade pip
