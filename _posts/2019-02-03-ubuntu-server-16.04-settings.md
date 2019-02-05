@@ -140,9 +140,10 @@ $ docker run -d --name mysql \
 $ docker exec -it huas-mysql /bin/bash
 $ mysql -u root -p
 mysql>alter user 'root'@'%' identified with mysql_native_password by '123456';
-# 或者
-update user set host = ‘%’ where user = ‘root’;
-# 前一条顺便改了密码，后一条不改
+# 注意改了密码
+
+# 改完可以保存一下docker镜像免得再弄
+$ docker commit <container_id/name> <new_images_name>
 ```
 
 #### docker部署yapi
