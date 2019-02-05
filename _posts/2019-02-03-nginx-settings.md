@@ -81,6 +81,12 @@ server {
 		proxy_set_header  Host  $http_host;
 		proxy_set_header  X-Real-IP  $remote_addr;
 		proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+
+		# 支持web socket（这个踩坑了，没配置导致前端服务一直取不到数据）
+		proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+
 		# 代理地址
         proxy_pass http://127.0.0.1:3000;
         # 下面这行千万别加，加了静态文件就失效了
