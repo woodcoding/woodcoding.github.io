@@ -120,7 +120,7 @@ python中方法可分这么几类，静态方法，类方法、属性方法，�
 
 - 迭代器和生成器
 迭代器和生成器的话我建议网上搜索一下资料详细了解一下，这里贡献一张网上搞来的图。
-![](../resources/images/python_it_and_ge.png)
+![](https://github.com/woodcoding/woodcoding.github.io/raw/master/resources/images/python_it_and_ge.png)
 简单来说，生成器是一种特殊的迭代器，自动实现了迭代器的`__iter__`和`__next__`方法。迭代器的内容一次性生成在内存中，而生成器只是保存了一种算法规律，每次调用`next`方法的时候再取得相应的内容，节约内存，生成器最直接的例子就是元组，其次是yield。下面代码奉上。
   ```python
     #coding: utf-8
@@ -240,7 +240,7 @@ Flask上下文是非常重要的，主要有4种，这里借用一下《Flask We
 ![](https://github.com/woodcoding/woodcoding.github.io/raw/master/resources/images/osi7.png)
 - TCP/IP五层模型
 甩个图，具体看课本吧
-![](https://github.com/woodcoding/woodcoding.github.io/raw/master//resources/images/tcpip5.png)
+![](https://github.com/woodcoding/woodcoding.github.io/raw/master/resources/images/tcpip5.png)
 - TCP/UDP概述
   - TCP：有连接，可靠传输
   - UDP：无连接，不可靠传输
