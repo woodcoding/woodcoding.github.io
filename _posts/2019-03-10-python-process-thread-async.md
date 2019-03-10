@@ -47,6 +47,7 @@ tags:
 
 - 启动进程  
 在python中的multiprocessing包中定义了Process类，所以我们在开启一个进程的时候对类的实例化可以有两种处理方式，直接实例化和继承再复写。
+
 ```python
 from multiprocessing import Process
 import os, time
@@ -79,7 +80,9 @@ if __name__ == "__main__":
     print("我是主进程，ID是%s" % os.getpid())
 
 ```
+
 输出  
+
 ```bash
 我是主进程，ID是11860
 橘子子进程你好，你父进程ID是11860，开始为您服务!
@@ -90,6 +93,7 @@ if __name__ == "__main__":
 
 
 - 方法介绍  
+
 ```python
 # 开启进程
 def start(self):pass
@@ -104,6 +108,7 @@ def is_alive(self):return False
 
 ### 线程
 Python中对线程也进行了封装，我们直接使用Thread这个包即可。类比上面进程的代码，其实使用起来非常相似，但是要注意这是封装的结果，他们的性质还有有区别的。  
+
 ```python
 from threading import Thread, current_thread
 import os, time
@@ -135,7 +140,9 @@ if __name__ == "__main__":
 
     print("我是主线程:%s，所属进程ID是:%s，父进程是:%s" % (current_thread().getName(), os.getpid(), os.getppid()))
 ```
+
 输出  
+
 ```bash
 PS D:\codetest> python -u "d:\codetest\python\mythread.py"
 我是子线程:orange，所属进程ID是:16164，父进程是:9732
@@ -153,6 +160,7 @@ PS D:\codetest> python -u "d:\codetest\python\mythread.py"
 注意这里多运行几次，因为线程共享了进程的资源，所以实体化与切换线程的过程是十分迅速的，线程之间进行切换所进行的资源消耗远低于多进程，所以你会看到每次运行都是几乎相同的结果。还注意到，所有线程的进程ID和父进程ID都是相同的。但是为什么每次父进程ID都是一样的呢，我又查了一下，发现这个其实是终端进程的ID，只要你当前终端没有终止，执行的话就一直是这个ID。  
 
 - 方法介绍  
+
 ```python
 # 启动线程
 def start():pass
@@ -168,7 +176,8 @@ def join():pass
 
 - 协程  
 如果说进程和线程都是由CPU控制的相互切换，那么协程就是代码内由程序猿自己控制的切换过程了。由于也是在同一线程内，所以几乎不消耗切换的时间与资源，唯一可能消耗的一点就是暂存的现场栈数据了。这里我们用几个方法来实现一下。  
-1. yield实现
+1. yield实现  
+
 ```python
 import time
 
@@ -192,7 +201,9 @@ def produce(c):
 c = consumer()
 produce(c)
 ```
+
 输出  
+
 ```bash
 [生产者]当前生产的是：1
 [消费者]当前消费的是：1
@@ -204,9 +215,11 @@ produce(c)
 [消费者]当前消费的是：3
 [生产者]消费者说：我消费OK了3
 ```
+
 &ensp;&ensp;&ensp;&ensp;yield是python中的生成器，生成器与迭代器以前讲过了，大体也有个印象，以后有时间再详说。看代码和输出，我们可以知道，代码在两个函数中交替执行。并且还会保存现场数据，不会像普通方法一样每次都要重新开头执行。这里值得注意的一点，函数中只要出现了yield，函数就是一个生成器了，所以你执行func()，yield前面的代码也不会执行，必须要send或者next才会启动生成器，而且send函数开始不能send非None值，并且每次只能send一个参数。  
 
 2. greenlet实现  
+
 ```python
 from greenlet import greenlet
 
@@ -231,6 +244,7 @@ c = greenlet(consumer)
 p = greenlet(producer)
 p.switch()
 ```
+
 greenlet主要是通过栈的复制切换来实现不同协程之间的切换，有时间可以好好读读源码了解一下。另外还有对greenlet的封装库，eventlet和gevent实现。Eventlet在Greenlet的基础上实现了自己的GreenThread，但是具有自己的Hub调度器，并且还对python的标准库打了补丁来实现“绿化操作”。Gevent也是对greenlet的封装，我目前在网上查到的资料是利用libev（linux下的包）进行高效调度，遇到IO操作时会自动切换，但是我实验的时候win下是可以用的，并且安装pip包的时候出现了`ys_platform == "win32" and platform_python_implementation == "CPython" (from gevent)`的字样，所以应该是后来实现了，至于具体的实现以后看源码再说吧。  
 
 ## 总结
