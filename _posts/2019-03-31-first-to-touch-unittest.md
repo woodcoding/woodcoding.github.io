@@ -251,7 +251,7 @@ runner.run(suite)
 
 
 ##### 原理分析
-让我们来看看框架的类图(来自网络)：
+让我们来看看框架的类图(来自网络)：  
 ![](/resources/images/2019-03-31/unittest.png)
 首先，由TestLoader进行扫描加载，把所有test开头的TestCase测试案例都加入到TestSuite，再由TestRunner运行suite，最后将执行结果输出到result。对于更详细的执行原理，更加详细的执行过程，可以通过runner.py文件源码进行查看。
 
@@ -273,8 +273,8 @@ main.py                30     11    63%   4, 7, 11, 15, 19-22, 35-36, 48-50
 TOTAL                 230     37    84%
 ```
 
-- 生成HTML网页报告(用HTMLTestRunner也可以生成报告，不过对于py3的支持要修改部分代码)
-```
+- 生成HTML网页报告(用HTMLTestRunner也可以生成报告，不过对于py3的支持要修改部分代码)  
+```bash
 coverage html
 ```
 
@@ -289,16 +289,17 @@ coverage html
 > 注意Python3中mock是自带的，python2中还要自己安装，pip install mock 一下即可，这里我使用的是python3
 
 ##### 基本方法
-这里我们主要介绍一下，mock时的传参：
+这里我们主要介绍一下，mock时的传参：  
 ```
 class Mock(spec=None, side_effect=None, return_value=DEFAULT,...)
 ```
-name：这个是用来命名一个mock对象，只是起到标识作用，打印mock对象name的时候可以看到。
-spec: 可以是字符串列表，也可以是充当模拟对象规范的现有对象（类或实例）。如果传入一个对象，则通过在对象上调用dir来形成字符串列表（不包括不受支持的魔术属性和方法）。访问不在此列表中的任何属性将引发AttributeError。如果spec是一个对象（而不是一个字符串列表），那么__class__将返回spec对象的类，允许模拟通过isinstance（）测试。
-spec_set: 比sepc更严格，用sepc你还可以设置一个未指定的属性。 使用spec_set后尝试在mock上设置或获取不在spec_set传递的对象上的属性将引发AttributeError。
-side_effect: 例如：`mock.Mock(return_value=10, side_effect=code.my_mvalue)`设置此属性之后mock的return_value不生效，调用原my_value真正的返回值
-return_value: 例如：`mock.Mock(return_value=10)`设置之后，调用时将返回设定的值，原函数的返回值将无效
-unsafe: 3.5版本新特性。默认情况下，如果任何属性以assert或assret开头，则会引发AttributeError。 传递unsafe = True将允许访问这些属性。
+
+- name：这个是用来命名一个mock对象，只是起到标识作用，打印mock对象name的时候可以看到。  
+- spec: 可以是字符串列表，也可以是充当模拟对象规范的现有对象（类或实例）。如果传入一个对象，则通过在对象上调用dir来形成字符串列表（不包括不受支持的魔术属性和方法）。访问不在此列表中的任何属性将引发AttributeError。如果spec是一个对象（而不是一个字符串列表），那么__class__将返回spec对象的类，允许模拟通过isinstance（）测试。  
+- spec_set: 比sepc更严格，用sepc你还可以设置一个未指定的属性。 使用spec_set后尝试在mock上设置或获取不在spec_set传递的对象上的属性将引发AttributeError。  
+- side_effect: 例如：`mock.Mock(return_value=10, side_effect=code.my_mvalue)`设置此属性之后mock的return_value不生效，调用原my_value真正的返回值  
+- return_value: 例如：`mock.Mock(return_value=10)`设置之后，调用时将返回设定的值，原函数的返回值将无效  
+- unsafe: 3.5版本新特性。默认情况下，如果任何属性以assert或assret开头，则会引发AttributeError。 传递unsafe = True将允许访问这些属性。  
 
 ##### 代码练习
 - 常规操作
@@ -348,8 +349,11 @@ FAILED (failures=1)
 ```
 
 - 使用装饰器mock一个模块下的类  
-这里我们先mock一下Code类，然后测试Use类，由于Use类调用了Code，因此可以达到我们想要的mock结果。
-> 注意：1. 参数中的mock_Code不是像test那样限制开头，可以随便命名
+
+这里我们先mock一下Code类，然后测试Use类，由于Use类调用了Code，因此可以达到我们想要的mock结果。  
+
+> 注意：
+> 1. 参数中的mock_Code不是像test那样限制开头，可以随便命名
 > 2. 这里我把类都写在了一个文件里面，所以使用了'__main__'(当前运行文件会设为这个值，下回有机会讨论一下)
 
 ```python
@@ -410,8 +414,9 @@ OK
 ```
 
 ##### 原理分析
-让我们看下Mock的类继承关系：
-![](/resources/images/2019-03-31/mock.png)
+让我们看下Mock的类继承关系：  
+![](/resources/images/2019-03-31/mock.png)  
+
 Mock继承自CallableMixin, NonCallableMock，而CallableMixin, NonCallableMock又是继承自Base，Base里面的代码其实只有4行，定义了return_value和side_effect的默认值，而具体的一些方法则是写入了CallableMixin和NonCallableMock：
 ```python
 class Base(object):
