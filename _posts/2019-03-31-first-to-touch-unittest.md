@@ -26,6 +26,7 @@ tags:
 - Test Runner：执行测试用例，既可以是Test Case，也可以是Test Suite。执行之后将结果送入Test Result中。
 - Test Result：管理Test Runner执行后的用例结果，是正确还是错误还是跳过，执行状态是：F(失败)，.(成功)，E(执行出错)，S(跳过执行)
 - Test Fixture：测试用例的环境准备。
+
 #### 基本方法
 ##### 编写测试用例class的方法
 ```python
@@ -48,8 +49,7 @@ def tearDown(self):pass
 # 测试函数
 def test_***(self):pass
 ```
-
-##### 断言
+##### 断言  
 我们测试一个过程正确或者错误都是通过断言。  
     
 | 方法                      |检测例子               |首次出现的Python版本  |
@@ -70,6 +70,7 @@ def test_***(self):pass
 | assertNotEqual(a, b)      | a != b               |     |
 
 ##### 跳过执行装饰器
+
 - @unittest.skip(reason)
 直接跳过，不执行
 
@@ -83,6 +84,7 @@ condition为假时跳过
 测试执行失败时跳过统计
 
 #### 代码练习
+
 偷偷看看官方文档，然后借鉴几个例子。  
 - 初步尝试
 官方的第一个例子，简单感受一下测试的魅力。这里主要是测试了字符串大小写以及异常分割的断言。
@@ -244,8 +246,8 @@ runner = unittest.TextTestRunner(verbosity=2)  # 设置verbosity=2可以显示�
 runner.run(suite)
 ```
 
-
 #### 原理分析
+
 让我们来看看框架的类图(来自网络)：  
 ![](/resources/images/2019-03-31/unittest.png)  
 
@@ -258,6 +260,7 @@ Coverage是一种用于统计Python代码覆盖率的工具，通过它可以检
 > https://coverage.readthedocs.io/en/latest/
 
 #### 用法
+
 - 控制台显示覆盖率：
 ```bash
 (venv) C:\tests>coverage report -m
@@ -279,12 +282,14 @@ coverage html
 
 ### 模拟数据(mock)
 #### 简介
+
 我们每次跑测试，肯定需要一些资源数据，但是不可能每次都用真实数据去跑。例如，测试资源不可用，或者不适合，他正开发中，测试资源太昂贵，不可预知，等等情况。这时候我们就需要使用mock来进行数据的模拟。官方文档地址：
 > https://docs.python.org/3.6/library/unittest.mock.html
 
 > 注意Python3中mock是自带的，python2中还要自己安装，pip install mock 一下即可，这里我使用的是python3
 
 #### 基本方法
+
 这里我们主要介绍一下，mock时的传参：  
 ```
 class Mock(spec=None, side_effect=None, return_value=DEFAULT,...)
@@ -298,6 +303,7 @@ class Mock(spec=None, side_effect=None, return_value=DEFAULT,...)
 - unsafe: 3.5版本新特性。默认情况下，如果任何属性以assert或assret开头，则会引发AttributeError。 传递unsafe = True将允许访问这些属性。  
 
 #### 代码练习
+
 - 常规操作
 让我们来mock一个价值百万的数据返回
 ```python
@@ -410,6 +416,7 @@ OK
 ```
 
 #### 原理分析
+
 让我们看下Mock的类继承关系：  
 ![](/resources/images/2019-03-31/mock.png)  
 
@@ -424,6 +431,7 @@ class Base(object):
 CallableMixin中主要是负责调用逻辑封装，签名检查，对象调用统计等工作以及最重要的我们要使用的一些调用，而NonCallableMock中则是重写一些魔法方法来达到mock数据的目的，魔法方法的一些用法目前还不是很懂就不献丑了。  
 
 ### 集成框架(nose)
+
 nose框架主要是把一些测试的流程都给串了起来，包括自动发现test命名的测试案例进行测试，覆盖率，报告生成之类的，在大型项目上可以应用上。这个不是python的标准库，需要使用`pip install nose`来进行安装。安装之后使用`nosetests -h`可以查看相关的命令。  
 
 ### 总结
