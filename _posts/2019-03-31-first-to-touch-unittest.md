@@ -252,7 +252,8 @@ runner.run(suite)
 
 ##### 原理分析
 让我们来看看框架的类图(来自网络)：  
-![](/resources/images/2019-03-31/unittest.png)
+![](/resources/images/2019-03-31/unittest.png)  
+
 首先，由TestLoader进行扫描加载，把所有test开头的TestCase测试案例都加入到TestSuite，再由TestRunner运行suite，最后将执行结果输出到result。对于更详细的执行原理，更加详细的执行过程，可以通过runner.py文件源码进行查看。
 
 #### 覆盖率(coverage)
