@@ -16,7 +16,7 @@ tags:
 单元测试就是编写一些测试代码，用来对一个函数，类对象，或者模块进行检测。一来可以保证程序执行的正确性，二来也可以尽量避免低级别的bug以及改动引发的其他模块bug（比如修1个bug，多出100个bug这种）。并且还有大名鼎鼎的TDD（Test-Driven Development）测试驱动开发。所以用测试来保证我们代码符合预期需求是非常重要的，也能让我们对产品的迭代更加有信心巴拉巴拉...是吧，反正很重要就是了。但是很多程序员（包括我）都是不怎么喜欢写测试的，毕竟是测试而不是功能代码，对自己的功(la)能(ji)代码自信得一批。幸好是刚出来的应届生还可以慢慢适应，不然不写单测怕是没人要了。  
 <!-- more -->
 
-#### 单测工具(unittest)
+### 单测工具(unittest)
 单测框架工具有很多，像Java就有Java的Junit，unittest就是python中的Junit。这个框架是Python自带的，其官方文档地址如下：  
 > https://docs.python.org/3.6/library/unittest.html
 
@@ -253,7 +253,7 @@ runner.run(suite)
 
 首先，由TestLoader进行扫描加载，把所有test开头的TestCase测试案例都加入到TestSuite，再由TestRunner运行suite，最后将执行结果输出到result。对于更详细的执行原理，更加详细的执行过程，可以通过runner.py文件源码进行查看。
 
-#### 覆盖率(coverage)
+### 覆盖率(coverage)
 
 ##### 简介
 Coverage是一种用于统计Python代码覆盖率的工具，通过它可以检测测试代码对被测代码的覆盖率如何。Coverage支持分支覆盖率统计，可以生成HTML/XML报告。官方文档地址：
@@ -279,7 +279,7 @@ coverage html
 ##### 原理分析
 分支检测原理：在这里，Coverage利用了trace追踪机制，你肯定接触过这东西，就是调试的时候。而对于web程序就更厉害了，web程序一般是循环监听，除非异常情况否则不会自动退出。而Coverage在实现上使用了atexit模块注册一个回调函数，在Python退出时将内存中的覆盖率结果写到文件中。被测脚本只有正常退出或者以SIGINT2信号退出才能出发atexit，才能得到覆盖率结果。CTRL+C发的即是SIGINT2信号，所以前台启动的服务用CTRL+C停止后可以出结果。而atexit它内部又是通过sys.exitfunc来实现的。
 
-#### 模拟数据(mock)
+### 模拟数据(mock)
 ##### 简介
 我们每次跑测试，肯定需要一些资源数据，但是不可能每次都用真实数据去跑。例如，测试资源不可用，或者不适合，他正开发中，测试资源太昂贵，不可预知，等等情况。这时候我们就需要使用mock来进行数据的模拟。官方文档地址：
 > https://docs.python.org/3.6/library/unittest.mock.html
@@ -425,7 +425,7 @@ class Base(object):
 ```
 CallableMixin中主要是负责调用逻辑封装，签名检查，对象调用统计等工作以及最重要的我们要使用的一些调用，而NonCallableMock中则是重写一些魔法方法来达到mock数据的目的，魔法方法的一些用法目前还不是很懂就不献丑了。  
 
-#### 集成框架(nose)
+### 集成框架(nose)
 nose框架主要是把一些测试的流程都给串了起来，包括自动发现test命名的测试案例进行测试，覆盖率，报告生成之类的，在大型项目上可以应用上。这个不是python的标准库，需要使用`pip install nose`来进行安装。安装之后使用`nosetests -h`可以查看相关的命令。  
 
 ### 总结
