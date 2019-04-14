@@ -88,6 +88,7 @@ condition为假时跳过
 偷偷看看官方文档，然后借鉴几个例子。  
 - 初步尝试
 官方的第一个例子，简单感受一下测试的魅力。这里主要是测试了字符串大小写以及异常分割的断言。
+
 ```python
 import unittest
 
@@ -109,7 +110,9 @@ class TestStringMethods(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 ```
-看下输出结果：
+
+看下输出结果：  
+
 ```bash
 ...
 ----------------------------------------------------------------------
@@ -117,7 +120,9 @@ Ran 3 tests in 0.001s
 
 OK
 ```
-这里3个案例都执行成功了，我们来搞两个错的试试。
+
+这里3个案例都执行成功了，我们来搞两个错的试试。  
+
 ```python
 import unittest
 
@@ -138,6 +143,7 @@ class TestStringMethods(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 ```
+
 输出结果如下：
 
 ```bash
@@ -167,7 +173,8 @@ FAILED (failures=1, errors=1)
 这里我们制造了两个错误，一个是函数功能测试错误，另一个是抛出异常错误，注意E和F的区别。F是指你的测试案例执行失败（案例执行成功），E是指你的测试案例中存在执行错误(一般是测试代码写错)。现在看到测试结果出现全对的时候也是有那么点小激动的。
 
 - 方法执行流程
-刚刚前面说了那么多方法，那么每个方法的执行流程是怎么样的呢？让我们来尝试一下。
+刚刚前面说了那么多方法，那么每个方法的执行流程是怎么样的呢？让我们来尝试一下。  
+
 ```python
 import unittest
 
@@ -221,13 +228,16 @@ OK
 - suite.addTests() # 加载系列测试用例（按加载过程有序）
 
 单个添加  
+
 ```python
 suite = unittest.TestSuite()
 suite.addTest(MyTest('test_upper'))
 runner = unittest.TextTestRunner(verbosity=2)  # 设置verbosity=2可以显示测试详情
 runner.run(suite)
 ```
+
 多个添加  
+
 ```python
 suite = unittest.TestSuite()
 tests = [MyTest('test_upper'), MyTest('test_split')]
@@ -235,7 +245,9 @@ suite.addTests(tests)
 runner = unittest.TextTestRunner(verbosity=2)  # 设置verbosity=2可以显示测试详情
 runner.run(suite)
 ```
+
 利用Load添加  
+
 ```python
 suite = unittest.TestSuite()
 tests1 = unittest.TestLoader().loadTestsFromNames(['MyTest.test_upper', 'MyTest.test_solit'])
@@ -261,7 +273,8 @@ Coverage是一种用于统计Python代码覆盖率的工具，通过它可以检
 
 #### 用法
 
-- 控制台显示覆盖率：
+- 控制台显示覆盖率：  
+
 ```bash
 (venv) C:\tests>coverage report -m
 Name                Stmts   Miss  Cover   Missing
@@ -272,7 +285,8 @@ main.py                30     11    63%   4, 7, 11, 15, 19-22, 35-36, 48-50
 TOTAL                 230     37    84%
 ```
 
-- 生成HTML网页报告(用HTMLTestRunner也可以生成报告，不过对于py3的支持要修改部分代码)  
+- 生成HTML网页报告(用HTMLTestRunner也可以生成报告，不过对于py3的支持要修改部分代码) 
+
 ```bash
 coverage html
 ```
@@ -291,6 +305,7 @@ coverage html
 #### 基本方法
 
 这里我们主要介绍一下，mock时的传参：  
+
 ```
 class Mock(spec=None, side_effect=None, return_value=DEFAULT,...)
 ```
@@ -306,6 +321,7 @@ class Mock(spec=None, side_effect=None, return_value=DEFAULT,...)
 
 - 常规操作
 让我们来mock一个价值百万的数据返回
+
 ```python
 from unittest import mock
 import unittest
@@ -332,7 +348,9 @@ if __name__ == "__main__":
     unittest.main()
 
 ```
-看下输出，发现一个是成功的，一个是失败的，说明我们的mock数据是生效了的：
+
+看下输出，发现一个是成功的，一个是失败的，说明我们的mock数据是生效了的： 
+
 ```bash
 .F
 ======================================================================
@@ -421,6 +439,7 @@ OK
 ![](/resources/images/2019-03-31/mock.png)  
 
 Mock继承自CallableMixin, NonCallableMock，而CallableMixin, NonCallableMock又是继承自Base，Base里面的代码其实只有4行，定义了return_value和side_effect的默认值，而具体的一些方法则是写入了CallableMixin和NonCallableMock：
+
 ```python
 class Base(object):
     _mock_return_value = DEFAULT
@@ -428,6 +447,7 @@ class Base(object):
     def __init__(self, *args, **kwargs):
         pass
 ```
+
 CallableMixin中主要是负责调用逻辑封装，签名检查，对象调用统计等工作以及最重要的我们要使用的一些调用，而NonCallableMock中则是重写一些魔法方法来达到mock数据的目的，魔法方法的一些用法目前还不是很懂就不献丑了。  
 
 ### 集成框架(nose)
