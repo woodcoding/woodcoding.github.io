@@ -30,7 +30,7 @@ categories:
 </video>
 当当当当， 蓝灯闪烁器： 
 <video id="video" controls="" preload="none">
-    <source id="mp4" src="/resources/videos/2020-03-03/iot1.MP4" type="video/mp4">
+    <source id="mp4" src="/resources/videos/2020-03-03/iot2.MP4" type="video/mp4">
 </video>
 然而并没有什么卵用，目前还没有想好要做啥，先留个坑，以后再填。
 
