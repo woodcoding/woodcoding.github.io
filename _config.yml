@@ -4,9 +4,9 @@
 # ---------------------------------------------------------------
 
 # Site
-title: woodcoding
-subtitle: 菜鸡程序员
-description: "万丈高楼，始于平凡大地."
+title: woodcoding的博客
+subtitle: 万丈高楼，始于平凡大地
+description: "woodcoding的博客"
 author: woodcoding
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
 language: zh-Hans
@@ -87,7 +87,7 @@ keywords: "woodcoding, blog"
 rss:
 
 # Specify the date when the site was setup
-since: 2018
+since: 2019
 
 # icon between year and author @Footer
 authoricon: user-circle-o
@@ -304,7 +304,7 @@ sidebar:
 scroll_to_more: true
 
 # Automatically saving scroll position on each post/page in cookies.
-save_scroll: false
+save_scroll: true
 
 # Automatically excerpt description in homepage as preamble text.
 excerpt_description: true
@@ -562,7 +562,7 @@ busuanzi_count:
 
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO
-baidu_push: false
+baidu_push: true
 
 # Google Calendar
 # Share your recent schedule to others via calendar page

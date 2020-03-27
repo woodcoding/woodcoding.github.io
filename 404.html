@@ -1,18 +1,102 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8;"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="robots" content="all" />
-  <meta name="robots" content="index,follow"/>
-  <link rel="stylesheet" type="text/css" href="https://qzone.qq.com/gy/404/style/404style.css">
-</head>
-<body>
-  <script type="text/plain" src="http://www.qq.com/404/search_children.js"
-          charset="utf-8" homePageUrl="/"
-          homePageName="回到我的主页">
-  </script>
-  <script src="https://qzone.qq.com/gy/404/data.js" charset="utf-8"></script>
-  <script src="https://qzone.qq.com/gy/404/page.js" charset="utf-8"></script>
-</body>
+    <head>
+        <title>404 - Page Not Found</title>
+
+        <meta charset="UTF-8">
+        <meta name="description" content="Clean and responsive administration panel">
+        <meta name="keywords" content="Admin,Panel,HTML,CSS,XML,JavaScript">
+        <meta name="author" content="Erik Campobadal">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8;"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="robots" content="all" />
+        <meta name="robots" content="index,follow"/>
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/uikit/3.1.5/css/uikit.min.css" />
+        <link rel="stylesheet" href="https://cdn.bootcss.com/ionicons/5.0.1/collection/components/icon/icon.min.css">
+        
+        <style>
+          a {
+            text-decoration: none;
+            color: #ffffff;
+          }
+          .a:focus {
+            outline: 0px none;
+          }
+          a:hover {
+            text-decoration: none;
+              color: #66c0f4;
+          }
+          a.nohover:hover {
+            text-decoration: none;
+          }
+          .main-button {
+            display: block;
+            margin: 20px auto;
+            text-transform: uppercase;
+            text-align: center;
+            width: 240px;
+            padding: 15px 50px 15px 25px;
+            border-radius: 3px;
+            filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.16));
+            font-size: 18px;
+            line-height: 1;
+            letter-spacing: 0.03em;
+            color: #fff;
+            position: relative;
+              font-family: "Motiva Sans", Sans-serif;
+              font-weight: normal; /* normal */
+              background: linear-gradient(to right, #06bfff 50%, #2b74ff 100%);
+            background-size: 200%;
+            background-position: right 0;
+            transition: background-position 300ms ease-in;
+          }
+        </style>
+        
+    </head>
+    <body>
+        <div class="content-background">
+            <div class="uk-section-large">
+                <div class="uk-container uk-container-large">
+                    <div uk-grid class="uk-grid-collapse uk-grid-match uk-child-width-1-1@s uk-child-width-1-4@l">
+                        <div></div>
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-body">
+                                <h1 class="uk-heading-primary uk-text-middle">404</h1>
+                                这是一片知识的荒原~
+                            </div>
+                        </div>
+                        <div>
+                            <div class="uk-card uk-card-primary uk-card-body">
+                                <h3 class="uk-card-title">今日份瞎说</h3>
+                                <p class="description">
+                                </p>
+                            </div>
+                        </div>
+                        <br>
+                        <div></div>
+                    </div>
+                    <div>
+                      <a href="/" class="main-button">返回首页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/uikit/3.1.5/js/uikit.min.js" ></script>
+		<script src="https://cdn.bootcss.com/uikit/3.1.5/js/uikit-icons.min.js" ></script>
+    <script>
+        $.ajax({
+            type: "GET",
+            url: 'https://open.iciba.com/dsapi/',
+            crossDomain: true,
+            dataType: 'jsonp',
+            success: function(result){
+                $(".description").html(result.content+'<br>'+result.note+'   ———— 「'+ result.caption +'」');
+                return false;
+            }
+        });
+    </script>
 </html>

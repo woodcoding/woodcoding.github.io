@@ -2,11 +2,14 @@
 layout: page
 title: 友链
 type: link
+comments: true
 ---
 
-这里供奉各位大佬的站点链接，顶礼膜拜~~~
+<blockquote class="blockquote-center">大佬若路过，留下博客链接先<br>友情链接站点观光团~~~</blockquote>
 
-- [Isheng](https://mapo.io)
-- [Freeloop](http://www.cnblogs.com/lishiyao/)
-- [Ankelen](http://www.cnblogs.com/ankelen)
 - [Happycode](http://www.cnblogs.com/haoabcd2010/)
+- [Freeloop](http://www.cnblogs.com/lishiyao/)
+- [Isheng](https://mapo.io)
+- [Ankelen](http://www.cnblogs.com/ankelen)
+- [aunhappy](https://aunhappy.github.io/)
+- [bearvini](http://www.bearvini.com/)
