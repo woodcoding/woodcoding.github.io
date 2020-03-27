@@ -50,7 +50,7 @@ kramdown:
     input: GFM
 
 #### mermaid enable
-mermaid: false
+mermaid: true
 
 # Default Attributes
 ## Docs: https://jekyllrb.com/docs/configuration/#front-matter-defaults
