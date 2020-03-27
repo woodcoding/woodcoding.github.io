@@ -39,15 +39,14 @@
   {% assign js_vendors = js_vendors | append: ', ' | append: 'canvas_ribbon: canvas-ribbon/canvas-ribbon.js' %}
 {% endif %}
 
-
 {% if site.mermaid %}  
 <script type="text/javascript" src="https://cdn.bootcss.com/mermaid/8.4.8/mermaid.min.js"></script>
 <script type="text/javascript">
   (function(){
     // Initial mermaid
-    mermaid.init({startOnLoad:true}, "pre code.language-mermaid", function(){
+    mermaid.init({startOnLoad:true}, "pre code.language-mE/Rmaid", function(){
       // Change <pre> and <code> block style
-      var codeBlock = document.querySelector('code.language-mermaid');
+      var codeBlock = document.querySelector('code.language-mE/Rmaid');
       var preBlock = codeBlock.parentNode;
 
       codeBlock.style.backgroundColor = 'initial';
