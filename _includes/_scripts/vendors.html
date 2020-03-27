@@ -39,6 +39,26 @@
   {% assign js_vendors = js_vendors | append: ', ' | append: 'canvas_ribbon: canvas-ribbon/canvas-ribbon.js' %}
 {% endif %}
 
+
+{% if site.mermaid %}  
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/8.4.8/mermaid.min.js"></script>
+<script type="text/javascript">
+  (function(){
+    // Initial mermaid
+    mermaid.init({startOnLoad:true}, "pre code.language-mermaid", function(){
+      // Change <pre> and <code> block style
+      var codeBlock = document.querySelector('code.language-mermaid');
+      var preBlock = codeBlock.parentNode;
+
+      codeBlock.style.backgroundColor = 'initial';
+      preBlock.style.border = 'none';
+      preBlock.style.textAlign = 'center';
+      preBlock.style.backgroundColor = 'initial';
+    });
+  })()
+</script>
+{% endif %}
+
 {% assign js_vendors = js_vendors | split: ", " | uniq %}
 {% for js_vendor in js_vendors %}
   {% assign name_internal = js_vendor | strip | split: ": " %}

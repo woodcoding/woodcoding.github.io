@@ -12,9 +12,9 @@ type: about
 
 ## 联系方式
 
-邮箱：woodcoding@foxmail.com，woodcoding@gmail.com
-网站：woodcoding.com
-博客：blog.woodcoding.com
+邮箱：woodcoding@foxmail.com，woodcoding@gmail.com  
+网站：woodcoding.com  
+博客：blog.woodcoding.com  
 Q Q：861842766  
 
 ## 工作经历

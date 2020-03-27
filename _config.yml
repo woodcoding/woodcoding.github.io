@@ -49,6 +49,9 @@ markdown: kramdown
 kramdown:
     input: GFM
 
+#### mermaid enable
+mermaid: true
+
 # Default Attributes
 ## Docs: https://jekyllrb.com/docs/configuration/#front-matter-defaults
 defaults:
