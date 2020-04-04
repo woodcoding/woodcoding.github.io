@@ -9,7 +9,7 @@
   {% assign html_class = html_class | append: ' use-motion' %}
 {% endif %}
 
-<html class="{{ html_class | downcase }}" lang="{{ site.language }}">
+<html class="{{ html_class | downcase }}" lang="{{ site.language }}" style="filter: grayscale(1);">
 <head>
   {% include _partials/head.html %}
   <title>{{ title }}</title>
