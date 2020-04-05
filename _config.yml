@@ -81,6 +81,9 @@ plugins:
 # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
 
+# Set site gray for mourn
+enable_gray: false
+
 # Set default keywords (Use a comma to separate)
 keywords: "woodcoding, blog"
 
