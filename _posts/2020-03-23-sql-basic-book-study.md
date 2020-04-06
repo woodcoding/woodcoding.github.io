@@ -15,6 +15,7 @@ categories:
 - 2020-03-26： 完成一、二、三章，把范式搞清楚就好办了
 - 2020-03-27： 完成第四章，E/R图完成，第一部分理论就完成了，准备进入数据库程序设计部分。
 - 2020-04-03： 完成第五章、第六章，基本上重点内容都已经记录到位，后面花个几天把尾巴补上。
+- 2020-04-06： 完成第七章、第八章，对于数据库的基本操作差不多就结束了，后面两个章节都是些数据库的应用了，像我们这种CRUD程序员平时用到的情况也不多，所以可能就挑一些重点内容学习下。
 
 ## 待完成
 
@@ -24,8 +25,8 @@ categories:
 - [x] 第四章 高级数据库模型(含E/R图)
 - [x] 第五章 代数和逻辑查询语言
 - [x] 第六章 数据库语言SQL
-- [ ] 第七章 约束与触发器
-- [ ] 第八章 视图与索引
+- [x] 第七章 约束与触发器
+- [x] 第八章 视图与索引
 - [ ] 第九章 服务器环境下的SQL
 - [ ] 第十章 关系数据库的新课题
 
@@ -1284,6 +1285,30 @@ SET name = ’Pres.‘ || name
 WHERE cert IN (SELECT presC FROM STUDIO);
 ```
 
+#### 数据库关系更新
+
+- 删除数据库
+
+```sql
+DROP DATABASE schema;
+```
+
+- 删除表
+
+```sql
+DROP TABLE R;
+```
+
+- 修改表
+
+```sql
+ALTER TABLE R xxx;
+
+# xxx可以是添加删除属性、添加删除约束等情况。
+```
+
+#### 修改
+
 ### 事务
 
 &ensp;&ensp;&ensp;&ensp;还记得前面第一章节了解的事务的概念吗，ACID能不能记起来是什么意思呢？
@@ -1355,6 +1380,7 @@ SQL一共提供了四种隔离层次(isolation level)：可串行化、读未提
 - 可重复读。
   
   语句：
+
   ```sql
   SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
   ```
@@ -1370,9 +1396,350 @@ SQL一共提供了四种隔离层次(isolation level)：可串行化、读未提
 | 可重复读（Repeatable read）  | 不可能 | 不可能     | 可能   |
 | 可串行化（Serializable ）    | 不可能 | 不可能     | 不可能 |
 
+## 第七章 约束与触发器
+
+&ensp;&ensp;&ensp;&ensp;虽然数据的插入由用户决定，但是人总是粗心的，有时候可能会造成插入的数据不符合完整性约束，或者需要在某种操作进行时需要对数据进行检查，约束和触发器应运而生。为了保证数据的完整性约束，SQL提供了各种技术把完整性约束作为数据库模式的一部分。本章节就是介绍如何利用约束与触发器来保证数据完整性。
+
+### 名词解释
+
+- **引用完整性约柬(Referential-Integrity Constraint)**:可以声明出现在某个属性或一组属
+性中的值，必须也出现在同一个关系或另一个关系的某个元组相应的属性(组)中。为此，在关系模式中使用REFERENCES或FOREIGN KEY声明。
+- **基于属性的检查约束(Attribute- Based Check Constraint)**: 关系模式属性声明的后面加
+保留字CHECK和要检查的条件，可以实现对属性值的约束。
+- **基于元组的检查约束(Tuple-Based Check Constraint)**: 通过在关系本身的声明中加
+CHECK保留字和要检查的条件，可以实现对关系元组的约束。
+- **修改约束(Modifying Constraint)**:用ALTER语 句为适当的表添加或删除基于元组的检查约束。
+- **断言(Assertion)**: 可以声明断言为数据库模式的元素。该声明给出一个要检查的条件。该条件可以涉及-一个或多个数据库模式关系，还可以将整个关系作为一个整体(例如，用聚集)，也可以只对单个的元组。
+- **激活裣查(Invoking the Check)**: 断言涉及的关系被改变时，断言声明的条件被检查。基于属性和基于元组的检查仅仅当属性或关系用插入或修改操作改变时被检查。因此，这些约束有子查询时被违反。
+- **触发器(Trigger)**: SQL标准包括触发器，它指明唤醒该触发的特定事件(例如，对某
+个关系的插人、删除或修改)。一且触发器被唤醒，触发的条件便被检查。如果条件是
+真，则指明的动作序列(SQL语句， 如查询和数据库更新)将被执行。
+
+### 键和外键
+
+#### 键
+
+&ensp;&ensp;&ensp;&ensp;键我们应该很熟悉了，前面也大量介绍过关于键的知识。数据库常用`PRIMARY KEY`和`UNIQUE`来定义一个或一组属性为一个关系的键。
+
+#### 外键
+
+&ensp;&ensp;&ensp;&ensp;外键约束是一个断言，它要求某些属性的值必须有意义。比如对于每部影片，其制片人的“证书号”也是Movi eExec关系中某制片人的证书号。  
+在SQL中可以将关系的一个属性或属性组声明为外键(foreign key)，该外键引用另一个
+关系(也可以是同一个关系)的属性(组)。外键声明隐含着如下两层意思:  
+
+1. 被引用的另一个关系的属性在它所在的关系中，必须被声明为UNIQUE或PRIMARY KEY，否则就不能做外键声明。  
+2. 在第一个关系中出现的外键值，也必须在被引用关系的某个元组的属性中出现。
+
+### 约束
+
+#### 外键约束
+
+外键约束有两种方法：
+
+- 如果外键是单个属性，则可以在此属性的名字和类型之后，声明其”引用”某个表的
+某个属性(被引用的属性必须有主键或唯一性声明)。声明的格式如下:
+
+```sql
+REFERENCES <表名> (<属性名>)
+
+# 如
+
+presC INT REFERENCES MovieExec(cert)
+
+```
+
+- 在CREATE TABLE语句的属性列表上追加一个或多个声明，来说明一组属性是一个外键。然后给出外键引用的表和属性(这些属性必须是键)。声明的格式为:
+
+```sql
+FOREIGN KEY （<属性 名列表>) REFERENCE <表名> (<属性名列表>）
+
+# 如
+
+FOREIGN KEY (presC) REFERENCES MovieExec(cert)
+```
+
+#### 引用完整性
+
+&ensp;&ensp;&ensp;&ensp;对于定义了外键约束的关系上，对两边进行更新（注：本书中更新指的是增加、删除、修改三种操作，这个在上一章节介绍数据库的时候有说到）操作时可能会违反完整性约束，因此可以在更新操作时定义维护完整性约束的操作。一般有三种：
+
+1. 缺省原则(The Default Policy): 拒绝违法更新。SQL有缺省原则，即拒绝任何违反引用完整性约束的更新。
+2.级联原则(The Cascade Policy): 在该原则下，被引用属性(组)的改变也被应用到外键上。例如，在级联原则下，当对电影公司经理删除MovieExec元组时，为了维护引用完整性，系统将从Studio中删除引用元组。如果对于某电影制片人将cert#的值从c1修改为C2，同时有某Studio元组的presC#值是c，则系统也把该presC#值修改为c2。
+3.置空值原则(The Set-Null Policy): 这里，当在被引用的关系上的更新影响外键值时，后者被改为空值(NULL)。 例如，如果从MovieExec中删除一个电影公司经理的元组，则系统会把该电影公司的presC#值改为空值。如果修改MovieExec中经理的证书号，则还是在Studio+中把presC#置为空值。
+
+&ensp;&ensp;&ensp;&ensp;这些选项可独立地选择删除和修改，并且它们同外键一起声明。声明的方法是在0N DELETE 或ON UPDATE后面加上SET NULL或CASCADE选项 。例如：
+
+```sql
+CREATE TABLE Studio (
+  name CHAR(30) PRIMARY KEY,
+  addrees VARCHAR(265) ,
+  preaC INT REFERENCES MovieExec(cert)
+      ON DELETE SET NULL
+      ON UPDATE CASCADE
+);
+```
+
+#### 延迟约束检查
+
+&ensp;&ensp;&ensp;&ensp;有时候会出现循环引用的情况，导致A插入时需要B存在，B插入时需要A存在，这时候由于约束的立即检查特性，导致数据无法正常插入，因此需要使用延迟约束检查，即把检查推迟到事务提交之前。使用`DEFERRABLE`（或者`NOT DEFERRABLE`，是默认值）选项进行约束，后面接`INITIALLY DEFERRED`或者`INITALLY IMMEDIATE`选项。前者推迟到事务提交前检查，后者每个语句后面都检查。如：
+
+```sql
+CREATE TABLE Studio (
+  name CHAR(30) PRIMARY KEY,
+  addre8s VARCHAR(255) ,
+  presC INT UNIQUE
+      REFERENCES MovieExec(cert)
+      DEFERRABLE INITIALLY DEFERRED
+);
+```
+
+**思考**：书上`NOT DEFERRABLE`和`INITALLY IMMEDIATE`都说是语句后立即检查，他们有何区别，组合起来有什么效果？这里我偷个懒，大侠路过的话试一试留言告诉我吧。
+
+#### 非空值约束
+
+直接在字段后面加`NOT NULL`，表示不能为空值
+
+#### check约束
+
+- 基于属性
+
+基于属性的check约束是值上的简单约束，如合法值得枚举或者算术不等式。同时，也可以是一个子查询的检查。例如：
+
+```sql
+presC INT REFERENCES MovieExec(cert) CHECK (presC >= 100000),
+
+gender CHAR(1) CHECK (gender IN ('F', 'M')),
+
+presC INT CHECK(presC IN (SELECT cert FROM MovieExec))
+
+```
+
+- 基于元组
+
+有时候需要同时对一个元组进行多项检查，这时可以用到基于元组的check，但是要注意基于元组的检查会比基于属性的检查要频繁，需要谨慎使用。例如：
+
+```sql
+CREATE TABLE MovieStar (
+  name CHAR(30) PRIMARY KEY,
+  address VARCHAR (255) ,
+  gender CHAR(1) ,
+  birthdate DATE,
+  CHECK (gender = 'F' OR name NOT LIKE 'Ms.%')
+);
+```
+
+#### 修改约束
+
+任何时候都可以添加、修改、删除约束，但是约束必须要有名字。命名方式为在约束前加保留字constraint和约束名字。如：
+
+```sql
+name CHAR(30) CONSTRAINT NameIsKey PRIMARY KEY,
+
+gender CHAR(1) CONSTRAINT NoAndor CHECK (gender IN ('F', 'M')),
+```
+
+修改例子如下：
+
+```sql
+ALTER TABLE MovieStar DROP CONSTRAINT NameIsKey;
+ALTER TABLE HovieStar DROP CONSTRAINT NoAndro;
+ALTER TABLE MovieStar ADD CONSTRAINT NameIsKey PRIMARY KEY (name) ;
+ALTER TABLE Movi eStar ADD CONSTRAINT NoAndro CHECK (gender IN ('F', 'M'));
+```
+
+### 断言
+
+&ensp;&ensp;&ensp;&ensp;SQL中主动元素的最强有力的形式与特定的元组或元组的分量并不相关。这些元素称作“触发器”和“断言”，它们是数据库模式的一部分，等同于表。并且：
+
+- 断言是SQL逻辑表达式，并且总是为真。
+- 触发器是与某个事件相关的一系列动作，例如向关系中插入元组。触发器总是当这些事件发生时被执行。
+
+基本语法：
+
+```sql
+# 创建
+CREATE ASSERTION <断言名> CHECK(<断言条件>);
+
+# 删除
+DROP ASSERTION <断言名>;
+```
+
+例如：
+
+```sql
+CREATE ASSERTION RichPres CHECK
+(NOT EXISTS
+    (SELECT Studio.name
+    FROM Studio, MovieExec
+    WHERE presC = cert AND netWorth < 10000000
+    )
+);
+
+CREATE ASSERTION SunLength CHECK (10000 >= ALL
+    (SELECT SUM(length) FRDM Hoviea GRQUP BY studi oName)
+);
+```
+
+比较：
+| 约束类型    | 声明的位置 | 动作的时间 | 确保成立?  |
+| --- | ------ | ------------- | ------------ |
+| 基于属性的CHECK | 属性         | 对关系插人元组或属性修改时 | 如果是子查询，则不能确保 |
+| 基于元组的CHECK | 关系模式元素 | 对关系插人元组或属性修改时 | 如果是子查询，则不能确保 |
+| 断言          | 数据库模式元素 | 对任何提及的关系做改变时 | 是                      |
+
+### 触发器
+
+&ensp;&ensp;&ensp;&ensp;触发器(trigger) 有时也称作事件~条件-动作规则(event condition-action rule)，或者ECA规则。触发器与前面已介绍的几种约束有如下三点不同。
+
+1. 仅当数据库程序员声明的事件发生时，触发器被激活。所允许的事件种类通常是对某
+个特定关系的插人、删除或修改。很多SQL系统中允许的另一种事件是事务的结束。
+2. 当触发器被事件激活时，触发器测试触发的条件(condiction)。 如果条件不成立，则响应该事件的触发器不做任何事情。
+3. 如果触发器声明的条件满足，则与该触发器相连的动作(action) 由DBMS执行。动作可以是以某种方式修改事件的结果，甚至可以是撤销事件所在的事务。事实上，动作可以是任何数据库操作序列，包括与触发事件毫无关联的操作。
+
+例如：
+
+```sql
+
+1)CREATE TRIGGER NetWorthTrigger
+2)AFTER UPDATE DF netWorth ON MovieExec
+3)REFERENCING
+4)    OLD ROW AS OldTuple,
+5)    NEW ROW AS NesTuple
+6)FOR EACH ROW
+7)WHEN (OldTuple.netWorth > NeuTuple.netWorth)
+8)    UPDATE MovieExec
+9)    SET netHorth = oldTuple.netWorth
+10)   WHERE cert = NewTuple.cert ;
+
+a) CREATE TRIGGER语句 (第(1)行)
+b) 指出触发事件并告诉触发器是在触发事件之前还是之后使用数据库状态的子句(第(2)行)。
+c) REFERENCING子句允许触发器的条件和动作引用正被修改的元组(第(3)至 第(5)行)。
+在更新的情况下，例如本例，该子句允许给在改变之前和之后的元组命名。
+d) 告诉触发器只对每个修改的行执行一次，还是对由SQL语句作的所有修改执行一次的子句(第(6)行)。
+e) 使用保留字WHEN和逻辑表达式的条件(第(7)行)。
+f) 由一个或多个SQL语句组成的动作(第(8)至 第(10)行)。
+```
+
+## 第八章 视图与索引
+
+&ensp;&ensp;&ensp;&ensp;本章首先介绍虛拟视图，虚拟枧图是由其他关系上的查询所定义的一种关系。處拟视图并不在数据库中进行存储，但是可以对其进行查询，就好像它确实被存储在数据库中一样。查询处理器会在执行查询时用视图的定义来替换视图。  
+&ensp;&ensp;&ensp;&ensp;视图也可以被物化，即它们从数据库中定期地进行构造并存储。物化视图可以加速查询的执行。其中一种非常重要的“物化视图”类型是索引，索引是一种被存储在数据库中的数据结构，它可以加速对存储的关系中特定元组的访问。本章也将介绍索引，并探讨在存储的表上选择合适索引的原则。
+
+### 名词解释
+
+- **虚拟视图(VirtualView)**:虚拟视图描述了怎样从数据库中存储的表或者其他视图逻辑
+地构造出一个新的关系(视图)。视图可以被查询就好像它是存储的关系一样。查询处
+理器会修改该查询，将其中的视图替换成定义该视图的基本表。
+- **可更新视图(Updatablc View)**: 有些仅基于一个关系的虚拟视图是可更新的，这意味着
+能对该视图作插人、删除以及修改操作，就好像它是存储的表一样。这些操作会转换为
+等效的对定义该视图的基本表上的修改。
+- **替换触发器(Instead-Of Trigger)**: SQL允许一类特殊的触发器应用于虚拟视图。当对视
+图的更新发生时，替换触发器就会将该更新操作转换为触发器中指定的作用于基本表的
+操作。
+- **索引(Index)**: 尽管索引并不是SQL标准的-部分，但是商用SQL系统都允许在属性上
+建立索引。当查询或者更新操作涉及建有索引的属性(组)的某个特定值或者一个取值
+范围时，索引能够加速该查询的执行。
+- **索引选择(Choosing Index)**:在索引加速查询的同时，它也会减慢数据库的更新，因为
+对于要更新的关系来说，它上面的索引也需要被更新。所以索引的选择是一-个很复杂的
+问题，是不是要建立索弓|取决于对数据库的操作中执行查询和更新所占比重。
+- **自动索引选择(Automatic Index Selection)**: 有些DBMS会提供I具用于为数据库自动
+选择索引。它们考察在数据库上执行的--些典型的查询和更新，并以此评估各种可能的
+索引所带来的开销。
+- **物化视图(Materialized View)**:除了把视图当作基本表上的-一个查询外，也可以将它定
+义为一个额外存储下来的关系，即物化视图。它的值是基本表的值的-一个函数。
+- **物化视图的维护(MaintainingMaterializedView)**:当基本表改变时，必须对值受到改
+变影响的物化视图进行相应的修改。对于很多常见类型的物化视图来说，可以使用增量
+式的维护方法，这样可以不需要重新计算整个视图。.
+
+### 虚拟视图
+
+&ensp;&ensp;&ensp;&ensp;`CREATE TABLE`定义的关系以物理形式存储在数据库中，是持久的，虚拟视图上的操作也和他差不多，但是虚拟视图从名字可以知道他并不是持久的，而是我们虚拟定义的一种关系，例如把某种查询结果作为视图，他的数据来源于物理形式的关系。
+
+#### 创建视图
+  
+  ```sql
+  CREATE VIEW <视图名> AS <视图定义>;
+  ```
+
+#### 查询视图
+
+  视图可以像一个被物理形式存储的表一样来查询。
+
+#### 属性重命名
+  
+  ```sql
+  CREATE VIEW MovieProd(movieTitle, prodName) AS
+      SELECT title, name
+      FROM Movies, MovieExec
+      WHERE producerC = cert
+  ```
+
+#### 删除视图
+  
+  ```sql
+  DROP VIEW MovieProd;
+  ```
+
+#### 可更新视图
+  
+  视图也可以像表一样更新，但是为了保证基本数据关系约束，有很多规则限制：
+
+  1. WHERE子句在子查询中不能使用关系R.
+  2. FROM语句只能包含一个关系R，不能再有其他关系。
+  3. SELECT语句中的属性列表必须包括足够多的属性，以保证对该视图进行元组插入时，能够用NULL或者适当的默认值来填充所有其他不属于该视图的属性。比如，SELECT语句中不允许包括被定义为非空或者没有默认值的属性。
+  
+  当然以上规则可不用严格遵守，但是还是建议少用视图来更新，比如有时候在视图上的更新应用到了真实表，但是由于插入的数据不满足视图的查询规则，所以你在视图上的更新操作并不会显示在视图中。
+
+  **注意** 当然，人类还是聪明的，我们可以在视图中加入触发器，以此进行数据更新操作的修正或者限制，以此达到我们的目的。
+
+### 索引
+
+&ensp;&ensp;&ensp;&ensp;关系中属性A上的索引(index) 是一种数据结构，它能提高在属性A上查找具有某个特定值的元组的效率。大型关系的索引的实现技术是DBMS实现中最重要的核心问题。典型的DBMS中用到的最重要的数据结构是“B-树”， 它是一种广义上的平衡二叉树。当讨论DBMS的实现时必然涉及B-树细节，但是目前，只需把索引想象成二叉查找树就足够了。
+
+#### SQL中的索引
+
+- 创建索引：
+  
+  ```sql
+  CREATE INDEX YearIndex ON Movies(year);
+
+  CREATE INDEX KeyIndex ON Movies(title, year);
+  ```
+
+- 删除索引：
+  
+  ```sql
+  DROP INDEX YearIndex;
+  ```
+
+#### 索引选择
+
+&ensp;&ensp;&ensp;&ensp;选择创建哪个索引要求数据库设计者做一个开销上的分析。实际上，索引的选择是衡量
+数据库设计成败的一个重要因素。设计索引时要考虑以下两个重要因素:
+
+- 如果属性上存在索引，则为该属性指定一个值或者取值范围能极大地提高查询的执行效
+率。同样，如果查询涉及该属性上的连接操作，也会带来性能上的改善。
+- 另一方面，为关系上的某个属性或者某个属性集建立的索引会使得对关系的插人、删除
+和修改变得更复杂和更费时。
+
+**注意**：一般来讲，我们在键上进行索引就足够了，还有就是查询频繁的字段也加上索引，这里面涉及到很多数据库调优的知识了，一般也是结合项目来进行所以不作过多分析，有兴趣自己看书吧。
+
+### 物化视图
+
+&ensp;&ensp;&ensp;&ensp;视图描述了如何通过在基表上执行查询来构造一个新的关系。 到目前为止，仅仅认为视图是关系的-一个逻辑上的描述，然而，如果一个视图被经常使用，则可能会想到将它物化(materialize)，即在任何时间都保存它的值。因为当基本表发生变化时，每次必须重新计算部分物化视图，所以就像维护索引一样，维护物化视图也要一定的代价。
+
+例如：
+
+```sql
+CREATE MATERIALIZED VIEW MovieProd AS
+    SELECT title, year , name
+    FROM Movies, MovieExec
+    WHERE producerC = cert;
+```
+
+**注意** 物化视图好像是固化视图，就是相当于创建一张新表，所以对于物化视图的维护都是要额外进行SQL语句执行的，由于mysql中没有这个特性，网上大家都是新建表来进行的，所以我也只是猜测，没法验证，因此暂时这样理解吧。
 
 附录1：
-> 符号读法（便于输入法快速打出）
+> 符号读法（便于输入法快速打出）  
 1 Α α alpha alf 阿尔法  
 2 Β β beta bet 贝塔  
 3 Γ γ gamma gam 伽马  
