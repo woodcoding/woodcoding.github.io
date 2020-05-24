@@ -2,7 +2,7 @@
 title: 有限状态机(FSM)
 date: 2020-05-23 20:30:00
 categories: 
- - Flask
+ - 计算机基础
 tags:
  - Python
  - 状态机
@@ -179,44 +179,45 @@ D -- 拒绝 --> A
 
 4. transitions开源库
 　transitions是一个由Python实现的轻量级的、面向对象的有限状态机框架。transitions最基本的用法如下，先自定义一个类，然后定义一系列状态和状态转移（定义状态和状态转移有多种方式，下面只写了最简明的一种，具体要参考文档说明），最后初始化状态机。
-```python
-from transitions import Machine
+
+    ```python
+        from transitions import Machine
 
 
-# 定义一个自己的类
-class Matter(object):
-    pass
+        # 定义一个自己的类
+        class Matter(object):
+            pass
 
 
-model = Matter()
+        model = Matter()
 
 
-# 状态定义
-states = ['solid', 'liquid', 'gas', 'plasma']
+        # 状态定义
+        states = ['solid', 'liquid', 'gas', 'plasma']
 
 
-# 定义状态转移
-# The trigger argument defines the name of the new triggering method
-transitions = [
-    {'trigger': 'melt', 'source': 'solid', 'dest': 'liquid'},
-    {'trigger': 'evaporate', 'source': 'liquid', 'dest': 'gas'},
-    {'trigger': 'sublimate', 'source': 'solid', 'dest': 'gas'},
-    {'trigger': 'ionize', 'source': 'gas', 'dest': 'plasma'}]
+        # 定义状态转移
+        # The trigger argument defines the name of the new triggering method
+        transitions = [
+            {'trigger': 'melt', 'source': 'solid', 'dest': 'liquid'},
+            {'trigger': 'evaporate', 'source': 'liquid', 'dest': 'gas'},
+            {'trigger': 'sublimate', 'source': 'solid', 'dest': 'gas'},
+            {'trigger': 'ionize', 'source': 'gas', 'dest': 'plasma'}]
 
 
-# 初始化
-machine = Machine(model=model, states=states, transitions=transitions, initial='solid')
+        # 初始化
+        machine = Machine(model=model, states=states, transitions=transitions, initial='solid')
 
 
-# Test
-print(model.state)    # solid
+        # Test
+        print(model.state)    # solid
 
-# 状体转变
-model.melt()
+        # 状体转变
+        model.melt()
 
-print(model.state)   # liquid
+        print(model.state)   # liquid
 
-```
+    ```
 
 
 
