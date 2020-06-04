@@ -149,7 +149,7 @@ tags:
 
 Java中定义类和C++差不多，类似如下：
 
-```Java
+```java
 public class Person{
    public String name;
    public int  age;
@@ -167,7 +167,7 @@ public class Person{
 
 Java中使用对象如下：
 
-```Java
+```java
 public static void main(String[] args){
    Person p = new Person();
 }
@@ -221,7 +221,7 @@ Java中允许使用pacakge对一组相同功能进行管理，但是要满足两
 #### 继承
    使用extends关键字进行类的继承，而且只能单继承，如下：
    
-   ```Java
+   ```java
    public class Fruit{
       public void info(){
          System.out.println("我是水果");
@@ -242,7 +242,7 @@ Java中允许使用pacakge对一组相同功能进行管理，但是要满足两
 
 #### 多态
    Java引用变量有两个类型，一个是编译时类型，一个是运行时类型。编译时类型由声明该变量时使用的类型决定。运行时类型由实际赋值的类型决定。因此就有可能出现多态。比如Dog、Cat都继承了Animal。则声明以下代码时：
-   ```Java
+   ```java
    Animal dog = new Dog();
    Animal cat = new Cat();
    dog.say();
@@ -252,7 +252,7 @@ Java中允许使用pacakge对一组相同功能进行管理，但是要满足两
 
    **注意** 使用instanceof可以判断对象是否是某种类型，方便正确进行多态转换。只要是类型相同或者具有继承关系则返回true。如:
    
-   ```Java
+   ```java
    hello instanceof Animal
    ```
 
@@ -279,13 +279,13 @@ JDK1.5开始提供了自动装箱和自动拆箱的功能。Java中对8种基本
 
 由于包装类对象其实是引用类型，所以以下代码会输出false：
 
-```Java
+```java
 System.out.println(new Integer(2)==new Integer(2));
 ```
 
 但是由于Java可以自动装箱，以下代码会输出true：
 
-```Java
+```java
 Integer a = 127;
 Integer b = 127;
 System.out.println(a == b);
@@ -293,7 +293,7 @@ System.out.println(a == b);
 
 因为在Java中对-128--127做了缓存，所以a和b其实是一个对象。同理也可以应用到Java的字符串对象，Java对字符串常量做了常量池管理，所以如果是静态定义相同的字符串值是相等的，但是字符串运算或者new出来的即使值相等，==也是false。如下：
 
-```Java
+```java
 String s0 = "Java学习";
 String s1 = "Java学习";
 String s2 = "Java";
@@ -309,7 +309,7 @@ System.out.println(s0==s1);
 
 final修饰的变量不可被改变，一旦获得了初始值，该final变量的值就不能被重新赋值。而且final修饰的成员必须由程序员显式赋值。final修饰的成员不可重新赋值，但是如果改成员是一个引用对象，那么引用对象的成员是可以改变的。final在Java中的作用其实相当于C++中的“宏定义”。下面我们来看一个例子：
 
-```Java
+```java
 String s1 = "Java学习";
 final String s2 = "Java";
 final String s3 = "学习";
@@ -323,7 +323,7 @@ System.out.println(s4==s1);
 
 先看一个抽象类的例子：
 
-```Java
+```java
 abstract class JavaAbstract{
     public void test(){
         System.out.println("test");
@@ -345,7 +345,7 @@ Java中的抽象类使用abstract关键对抽象类进行定义。抽象类可�
 
 先看一个接口的例子：
 
-```Java
+```java
 interface JavaInterface{
     public void test();
     public void go();
@@ -380,7 +380,7 @@ Java中的接口使用interface关键字进行定义。接口可以理解为规�
 
 Lambda表达式是Java8的重要更新，其实就是用更简洁的代码来创建只有一个抽象方法的接口(又称之为函数接口)。相比起Py的lambda表达式，这个语法真是太尴尬了。例如：
 
-```Java
+```java
 Eatable obj = () -> {
    System.out.println("hh");
 };
@@ -391,7 +391,7 @@ obj.eat();
 
 和其他语言都差不多，直接举例吧：
 
-```Java
+```java
 enum Gender{
     MALE("男"),
     FEMALE("女");
@@ -414,7 +414,7 @@ enum Gender{
 
 Java的基础类库都是一些方法的调用，需要手动实践理解。其中提供了包括系统相关(System、Runtime等)、字符串相关(String、StringBuffer、StringBuilder等)、对象(Object)、数学(Math、BigDecimal等)、日期(Date、Calendar等)、正则、国际化等等。
 
-```Java
+```java
 
 public class JavaBasicUtils {
     public static void main(String[] args) {
@@ -462,7 +462,7 @@ public class JavaBasicUtils {
 
 Collection中定义了一些基本方法，如add、clear、contains等。同时可以使用Iterator迭代器进行元素迭代，如下所示：
 
-```Java
+```java
 public class JavaSet {
     public static void main(String[] args) {
         Collection c = new ArrayList();
@@ -491,7 +491,7 @@ public class JavaSet {
 
 同时Java还支持链式操作，如下：
 
-```Java
+```java
 books.stream().filter(ele->((String)ele).contains("Java")).count();
 ```
 
@@ -511,7 +511,7 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
 4. Queue
    队列的实现。一个特别的实现是优先队列(PriorityQueue)。如下：
 
-   ```Java
+   ```java
    PriorityQueue pq = new PriorityQueue();
    pq.offer(6);
    pq.offer(11);
@@ -534,7 +534,7 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
    - 查找替换：binarySearch、max、min、fill等。
    - 同步控制：使用Collections.synchronizedXXX等方法可以让非线程安全的结合变成线程安全，但是通过Iterator、Spliterator或Stream遍历这个新List时，需要在外部做好同步。如：
   
-      ```Java
+      ```java
       List list = Collections.synchronizedList(new ArrayList());
       ```
 
