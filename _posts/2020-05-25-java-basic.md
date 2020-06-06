@@ -111,6 +111,7 @@ tags:
 #### 数组
 
 1. 定义
+   
    Java定义数组时，以下两种定义方式都支持：
 
    ```java
@@ -119,17 +120,21 @@ tags:
    ```
 
 2. 初始化
+   
    - 静态初始化
+  
    ```java
    intArr = new int[]{5, 6, 7, 8}
    ```
-
+   
    - 动态初始化
+  
    ```java
    intArr = new int[5];
    ```
 
 3. 使用
+   
    - 获取长度： arr.length
    - foreach循环：
    ```java
@@ -139,6 +144,7 @@ tags:
    ```
 
 4. Java8增强的工具类Arrays
+   
    Java提供的Arrays类包含了一些static修饰的方法可以直接操作数组，详情可以自己看文档。
 
 
@@ -455,47 +461,49 @@ public class JavaBasicUtils {
 #### 集合
 
 1. 概述
+   
    Java中集合类型主要由两个接口派生：Collection和Map。详情查看下面的的图：
    ![](/resources/images/2020-06-04/2020-06-04-20-48-04.png)
 
    ![](/resources/images/2020-06-04/2020-06-04-20-49-55.png)
 
-Collection中定义了一些基本方法，如add、clear、contains等。同时可以使用Iterator迭代器进行元素迭代，如下所示：
+   Collection中定义了一些基本方法，如add、clear、contains等。同时可以使用Iterator迭代器进行元素迭代，如下所示：
 
-```java
-public class JavaSet {
-    public static void main(String[] args) {
-        Collection c = new ArrayList();
+   ```java
+   public class JavaSet {
+      public static void main(String[] args) {
+         Collection c = new ArrayList();
 
-        c.add("Java");
-        c.add(100);
-        c.add(100);
+         c.add("Java");
+         c.add(100);
+         c.add(100);
 
-        System.out.println(c.size());
-        System.out.println(c.contains(100));
-        System.out.println(c.toString());
+         System.out.println(c.size());
+         System.out.println(c.contains(100));
+         System.out.println(c.toString());
 
-        c.forEach(obj-> System.out.println(obj));
+         c.forEach(obj-> System.out.println(obj));
 
-        Iterator it = c.iterator();
-        while (it.hasNext()){
-            System.out.println(it.next());
-            if(it.next().toString().equals("Java")){
-               it.remove();
-            }
-        }
+         Iterator it = c.iterator();
+         while (it.hasNext()){
+               System.out.println(it.next());
+               if(it.next().toString().equals("Java")){
+                  it.remove();
+               }
+         }
 
-    }
-}
-```
+      }
+   }
+   ```
 
-同时Java还支持链式操作，如下：
+   同时Java还支持链式操作，如下：
 
-```java
-books.stream().filter(ele->((String)ele).contains("Java")).count();
-```
+   ```java
+   books.stream().filter(ele->((String)ele).contains("Java")).count();
+   ```
 
 2. Set
+   
    Set是一个元素不重复的元组，在Java中有好几种数据结构的实现，根据不同的数据结构可以实现不同的操作。
    
    - HashSet：经典Set实现，不保证元素排列顺序，非线程安全，元素值可以为null（注意对象的比较，如果要保证自定义对象唯一，需要重写equals和hashCode方法）
@@ -504,11 +512,13 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
    - EnumSet：专为枚举类设计的集合类，非线程安全。
    
 3. List
+   
    - ArrayList是最常用的List实现，数组实现，允许对元素进行快速随机访问，当数组大小不满足时需要增加存储时需要将已经有数组的数据复制到新的存储空间中。当从ArrayList的中间位置插入或者删除元素时，需要对数组进行复制、移动、代价比较高。因此，它适合随机查找和遍历，不适合插入和删除。
    - Vector与ArrayList一样，也是通过数组实现的，不同的是它支持线程的同步，即某一时刻只有一个线程能够写Vector，避免多线程同时写而引起的不一致性，但实现同步需要很高的花费，因此，访问它比访问ArrayList慢。但是Vector提供了一个Stack子类，即栈的实现。
    - LinkedList是用链表结构存储数据的，很适合数据的动态插入和删除，随机访问和遍历速度比较慢。另外，他还提供了List接口中没有定义的方法，专门用于操作表头和表尾元素，可以当作堆栈、队列和双向队列使用。
    
 4. Queue
+   
    队列的实现。一个特别的实现是优先队列(PriorityQueue)。如下：
 
    ```java
@@ -520,6 +530,7 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
    ```
 
 5. Map
+   
    字典的实现，就是key-value的形式。同Set一样，Java中也有多种实现：
    - HashMap与HashTable：HashMap非线程安全，允许null为key，而HashTable则相反，HashMap是比较常用的，保证线程安全可以使用后面讲的Collection类。
    - LinkedHashMap：主要是基于Hash再加上前后指针的双向链表实现，性能略低于HashMap，但是迭代全部元素时性能挺好，可以保持插入顺序或者访问顺序进行读取。
@@ -529,6 +540,7 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
    - EnumMap：顾名思义，只保存枚举类的Map。
    
 6. Collections
+   
    操作集合的工具类，提供了集合的多种操作：
    - 排序操作：reverse、shuffle、sort、swap、rotate等。
    - 查找替换：binarySearch、max、min、fill等。
