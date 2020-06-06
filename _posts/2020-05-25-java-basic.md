@@ -15,12 +15,12 @@ tags:
 - [x] 流程控制与数组
 - [x] 面向对象
 - [x] 基础类库
-- [ ] 异常
-- [ ] 注解
-- [ ] 反射
-- [ ] 输入输出流
-- [ ] 多线程与多进程
-- [ ] 网络编程
+- [x] 异常
+- [x] 注解
+- [x] 反射
+- [x] 输入输出流
+- [x] 多线程
+- [x] 网络编程
 
 
 <!-- more -->
@@ -540,21 +540,1081 @@ books.stream().filter(ele->((String)ele).contains("Java")).count();
 
 ### 泛型
 
+JDK1.5开始增加了对泛型的支持，没有泛型之前，当把一个对象放入集合，集合会忘记这个对象的类型，也就是变成Object，拿出来的时候需要进行显式类型转换，而且容易引起ClassCastException异常。而增加泛型支持之后则不需要显式转换了。
+
+#### 使用泛型
+
+Java7之前，使用泛型是这样的：
+
+```java
+List<String> strList = new ArrayList<String>();
+Map<String, Integer> scores = new HashMap<String, Integer>(); 
+```
+
+Java7之后，可以去掉后面尖括号里面的东西了，毕竟这样显得多余。
+
+```java
+List<String> strList = new ArrayList<>();
+Map<String, Integer> scores = new HashMap<>(); 
+```
+
+
+#### 定义泛型
+
+如下：
+```java
+class Fruit<T>{
+    private List<T> data = new ArrayList();
+    public void add(T v){
+        data.add(v);
+    }
+    public void show(){
+        System.out.println(data.toString());
+    }
+}
+```
+其实就是用了一个`<T>`来代替我们实例化时所规定的类型。这个T其实可以是任意变量名，但是我们一般为了规范会遵循以下规则：
+
+- E - Element (在集合中使用，因为集合中存放的是元素)
+- T - Type（Java 类）
+- K - Key（键）
+- V - Value（值）
+- N - Number（数值类型）
+- ？ -  表示不确定的java类型
+- S、U、V  - 2nd、3rd、4th types
+
+注意其中的？，可以用来规定继承上限和继承下限。上限通配符 <?  extends  U> 可以代表这个未知类型 U，或者 通过关键字 extends 所能想象出的 U 类的任何一个子类。同样，下限通配符 <?  super  L> 可以代表这个未知类型 L，或者 通过关键字 super 所能想象出的 L类的任何一个超类。
+
+
 ### 异常
+
+使用try-catch-finally结构进行异常捕获与处理。其中finally是可选的。使用throws关键字可以抛出捕获的异常，并且可以抛出多个。使用throw可以抛出自定义异常，注意和前面throws的区别，throws是抛出已经发生的异常。代码示例如下：
+
+```java
+class MyException extends Exception{
+    public MyException(){};
+    public MyException(String msg){
+        super(msg);
+    }
+    public MyException(Throwable t){
+        super(t);
+    }
+}
+
+public class TestException {
+    public static void main(String[] args) {
+        try{
+            firstMethod();
+        }
+        catch (MyException ex){
+            ex.printStackTrace();
+        }
+        finally {
+            System.out.println("测试完毕!");
+        }
+    }
+
+    private static void firstMethod() throws MyException {
+        secondMethod();
+    }
+
+    private static void secondMethod() throws MyException {
+        throw new MyException("发生异常。。。");
+    }
+}
+
+```
 
 ### 注解
 
+Java的注解看起来和Python的装饰器语法一样，其实效果差得远了。Python里面只要装饰起来就可以直接操作这个对象，但是Java这个注解其实就是个标记而已，如果想要操作，还要通过反射来获取对象。如下：
+
+```java
+
+//自定义一个注解
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyTag{
+    String name() default "Test";
+    int age() default 22;
+}
+
+@MyTag
+class Test{
+
+    @Deprecated
+    @MyTag
+    public void qq() {
+        System.out.println("gg");
+    }
+}
+
+public class TestAnnotation {
+    public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException {
+        Test tt = new Test();
+        Annotation[] arr = tt.getClass().getMethod("qq").getAnnotations();
+        for(Annotation an : arr){
+            System.out.println(an);
+            if(an instanceof MyTag){
+                System.out.println(((MyTag) an).age());
+            }
+        }
+    }
+}
+
+```
+
+1. 五个基本注解类型
+   
+  - @Override：复写父类方法注解，就是标记性的，加上这个注解之后编译器会检查是否正确复写，避免出现复写方法错误的问题。
+  - @Deprecated：标记已过时
+  - @SuppressWarnings：抑制编译器警告，就是取消编译器的警告提示。
+  - @SafeVarargs：抑制“堆污染”警告，就是将A类型的泛型对象赋值给B类型的泛型引用。
+  - @FunctionalInterface：函数式接口注解，加上之后就会严格检查只能有一个抽象方法。
+
+2. 四个元注解
+   
+  - @Retention：修饰注解定义，指定被修饰的注解的存在方式。有RetentionPolicy.CLASS，默认值，记录在class文件中，运行时不可获取信息、RetentionPolicy.RUNTIME，记录在class文件中，运行时JVM或者反射可以获取到信息、RetentionPolicy.SOURCE，只保留在源代码中，编译时丢弃。
+  - @Target：修饰注解定义，指定被注解修饰的对象的类型，也有很多value值可以取。
+  - @Documented：修饰注解定义，在对象被javadoc提取文档时也提取注解名。
+  - @Inherited：修饰注解定义，指定注解可被继承。
+
+
 ### 反射
+
+上面的注解已经使用过反射功能了。Java中的反射其实就是在程序运行时从JVM中拿到对象并对对象进行系列操作的过程，这个功能倒是和Python的装饰器功能很像了。Java的反射涉及到JVM一些底层的知识，务必要多多了解。
+
+#### 类加载
+
+首先要知道一个Java程序会运行在一个JVM虚拟机中，不管你开了多少个线程，都只有一个JVM进程，这也是接下来我们只学习多线程而没有多进程的原因。当程序使用某个类时会通过加载、连接、初始化三个步骤进行操作。Java有三个基本类加载器，开发者也可以通过继承ClassLoader来实现自己的类加载器，下面是三个基本类加载器的说明：
+
+- Bootstrap ClassLoader：根类加载器，加载Java核心类，非Java实现
+- Extension ClassLoader：扩展类加载器，加载ext扩展类，父类加载器是根类加载器，但是.getParet方法并不会返回根类加载器，因为根类加载器非Java实现。
+- System ClassLoader：系统类加载器，加载CLASSPATH下的类，如无特殊指定，用户自定义的类都以系统类加载器加载。
+
+
+#### 反射操作对象
+
+下面是反射操作对象的一个例子
+
+```java
+class PersonReflect{
+    private int age;
+    public String name;
+
+    public PersonReflect(){}
+
+    public PersonReflect(int age, String name){
+        this.age=age;
+        this.name=name;
+    }
+
+    public void show(){
+        System.out.println("show");
+    }
+
+    public void show(String msg){
+        System.out.println(msg);
+    }
+
+    private void go(){
+        System.out.println("go");
+    }
+}
+
+
+public class TestReflect {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Class<PersonReflect> clazz = PersonReflect.class;
+        Constructor<?>[] cts = clazz.getDeclaredConstructors();
+
+        for(Constructor c : cts){
+            System.out.println(c);
+        }
+
+        Method[] mtds = clazz.getDeclaredMethods();
+        for(Method mtd : mtds){
+            System.out.println(mtd);
+        }
+
+        Method method = clazz.getMethod("show", String.class);
+        method.invoke(clazz.newInstance(), "hhh");
+
+        Parameter[] parameters = method.getParameters();
+        for(Parameter p : parameters){
+            System.out.println(p.getName());
+        }
+    }
+}
+
+```
+
+#### 动态代理
+
+由于Java反射提供了一个Proxy的类，我们还可以利用反射特性和Proxy来实现类对象的动态代理，这在AOP面向切面编程中有着重要作用。代理一个很重要的作用就是我们可以在程序执行前后执行一些操作，如下：
+
+```java
+class DogUtil{
+    public void before(){
+        System.out.println("调用前");
+    }
+
+    public void after(){
+        System.out.println("调用后");
+    }
+}
+
+
+interface Dog{
+    void info();
+    void run();
+}
+
+class GunDog implements Dog{
+    public void info(){
+        System.out.println("Gun Dog");
+    }
+
+    public void run(){
+        System.out.println("Gun Dog run");
+    }
+}
+
+class MyInvocationHandler implements InvocationHandler{
+    private Object target;
+    public void setTarget(Object obj){
+        this.target = obj;
+    }
+
+    public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+        DogUtil du = new DogUtil();
+        du.before();
+        Object result = method.invoke(target, args);
+        du.after();
+        return result;
+    }
+}
+
+class MyProxyFactory{
+    public static Object getProxy(Object target){
+        MyInvocationHandler handler = new MyInvocationHandler();
+        handler.setTarget(target);
+        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), handler);
+    }
+}
+
+
+public class TestProxy {
+    public static void main(String[] args) {
+        Dog target = new GunDog();
+        Dog dog = (Dog)MyProxyFactory.getProxy(target);
+        dog.info();
+        dog.run();
+    }
+}
+
+```
 
 ### 输入输出流
 
+#### 文件访问
+
+通过java.io下的File类，我们可以执行一些文件相关的操作，如下：
+
+```java
+public class TestFile {
+    public static void main(String[] args) throws IOException {
+        File file = new File(".");
+        System.out.println(file.getName());
+        System.out.println(file.getParent());
+        System.out.println(file.getAbsoluteFile());
+
+        File tmpFile = File.createTempFile("aaa", ".txt", file);
+        System.out.println(tmpFile.exists());
+        tmpFile.deleteOnExit();
+        File newFile = new File(System.currentTimeMillis()+"");
+        System.out.println(newFile.exists());
+//        newFile.createNewFile();
+        System.out.println(newFile.exists());
+        String[] fileList = file.list();
+        for (String fileName: fileList
+             ) {
+            System.out.println(fileName);
+        }
+
+        for (File root: File.listRoots()) {
+            System.out.println(root);
+        }
+    }
+}
+
+```
+
+#### 流对象
+
+Java的IO流是实现输入输出的基础，把硬件、文件等输入输出都包装成Stream流式对象，可以很方便的实现输入输出操作。下面是一个把键盘输入包装成流操作的例子：
+
+```java
+public class TestSteam {
+    public static void main(String[] args) throws IOException {
+        InputStreamReader reader = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(reader);
+        String line = null;
+        while ((line=br.readLine()) != null){
+            System.out.println(line);
+            if("exit".equals(line))System.exit(0);
+        }
+
+    }
+}
+```
+
+#### 序列化
+
+序列化在数据存储和传输方面有着极大的作用。 Java中要实现序列化则类必须实现Serializable、Externalizable两个接口之一。下面是将对象进行序列化的例子：
+
+```java
+class Person implements java.io.Serializable{
+    String name;
+    int age;
+
+    public Person(String name, int age){
+        this.name=name;
+        this.age=age;
+        System.out.println(name);
+    }
+}
+
+public class TestPickle {
+
+    public static void main(String[] args) {
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("object.txt"))){
+            Person p = new Person("Java", 22);
+            oos.writeObject(p);
+            System.out.println(p.name);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("object.txt"))){
+            Person p = (Person)ois.readObject();
+            System.out.println(p.name);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+#### NIO新IO
+
+Java中传统的输入输出流是阻塞式的，nio中将文件或片段映射到内存中可以高效的进行存取访问，但是由于使用方法复杂以及目前还没了解到应用场景所以暂时放一放，后面再细看。
+
 ### 多线程
+
+在Java中没有多进程这个说法，只有多线程，因为一个JVM虚拟机就是一个进程。通过使用多线程可以显著提高程序效率，但是也要考虑好线程间的同步互斥问题。
+
+#### 使用线程的三种方法
+
+1. 继承Thread类
+   通过继承Thread类并重写其中的run方法。然后new这个对象执行start方法即可。如下：
+   
+   ```java
+   public class FirstThread extends Thread
+   {
+      private int i ;
+      // 重写run方法，run方法的方法体就是线程执行体
+      public void run()
+      {
+         for ( ; i < 100 ; i++ )
+         {
+            // 当线程类继承Thread类时，直接使用this即可获取当前线程
+            // Thread对象的getName()返回当前该线程的名字
+            // 因此可以直接调用getName()方法返回当前线程的名
+            System.out.println(getName() +  " " + i);
+         }
+      }
+      public static void main(String[] args) 
+      {
+         for (int i = 0; i < 100;  i++)
+         {
+            // 调用Thread的currentThread方法获取当前线程
+            System.out.println(Thread.currentThread().getName()
+               +  " " + i);
+            if (i == 20)
+            {
+               // 创建、并启动第一条线程
+               new FirstThread().start();
+               // 创建、并启动第二条线程
+               new FirstThread().start();
+            }
+         }
+      }
+   }
+   ```
+
+2. 实现Runable接口
+   通过实现Runable接口的run方法，实例化对象后作为target传入Thread开启新线程。如下：
+
+   ```java
+   public class SecondThread implements Runnable
+   {
+      private int i ;
+      // run方法同样是线程执行体
+      public void run()
+      {
+         for ( ; i < 100 ; i++ )
+         {
+            // 当线程类实现Runnable接口时，
+            // 如果想获取当前线程，只能用Thread.currentThread()方法。
+            System.out.println(Thread.currentThread().getName()
+               + "  " + i);
+         }
+      }
+         
+      public static void main(String[] args) 
+      {
+         for (int i = 0; i < 100;  i++)
+         {
+            System.out.println(Thread.currentThread().getName()
+               + "  " + i);
+            if (i == 20)
+            {
+               SecondThread st = new SecondThread();     // ①
+               // 通过new Thread(target , name)方法创建新线程
+               new Thread(st , "新线程1").start();
+               new Thread(st , "新线程2").start();
+            }
+         }
+      }
+   }
+
+   ```
+
+3. 实现Callable接口
+   这种方法和上面的Runable差不多，但是这种方法可以有返回值。如下：
+
+   ```java
+   public class ThirdThread implements Callable<Integer>
+   {
+      // 实现call方法，作为线程执行体
+      public Integer call()
+      {
+         int i = 0;
+         for ( ; i < 100 ; i++ )
+         {
+            System.out.println(Thread.currentThread().getName()
+               + " 的循环变量i的值：" + i);
+         }
+         // call()方法可以有返回值
+         return i;
+      }
+
+      public static void main(String[] args) 
+      {
+         // 创建Callable对象
+         ThirdThread rt = new ThirdThread();
+         // 使用FutureTask来包装Callable对象
+         FutureTask<Integer> task = new FutureTask<Integer>(rt);
+         for (int i = 0 ; i < 100 ; i++)
+         {
+            System.out.println(Thread.currentThread().getName()
+               + " 的循环变量i的值：" + i);
+            if (i == 20)
+            {
+               // 实质还是以Callable对象来创建、并启动线程
+               new Thread(task , "有返回值的线程").start();
+            }
+         }
+         try
+         {
+            // 获取线程返回值
+            System.out.println("子线程的返回值：" + task.get());
+         }
+         catch (Exception ex)
+         {
+            ex.printStackTrace();
+         }
+      }
+   }
+   ```
+
+ 4. 三种方式对比
+    通过继承Thread类或实现Runnable、Callable接口都可以实现多线程，不过实现Runnable接口与实现Callable接口的方式基本相同，只是Callable接口里定 义的方法有返回值，可以声明抛出异常而已。因此可以将实现Runnable接口和实现Callable接口归为一种方式。这种方式与继承Thread方式之间的主要差别如下。
+    
+    - 采用实现Runnable、Callable接 口的方式创建多线程的优缺点:
+      - 线程类只是实现了Runnable接口或Callable接口，还可以继承其他类。
+      - 在这种方式下，多个线程可以共享同一-个target对象，所以非常适合多个相同线程来处理同一-份资源的情况，从而可以将CPU、代码和数据分开，形成清晰的模型，较好地体现了面向对象的思想。
+      - 劣势是，编程稍稍复杂，如果需要访问当前线程，则必须使用Thread.currentThread()方法。
+    
+    - 采用继承Thread类的方式创建多线程的优缺点:
+      - 劣势是，因为线程类已经继承了Thread类，所以不能再继承其他父类。
+      - 优势是，编写简单，如果需要访问当前线程则无须使用Thread.currentThread()方法，直接使用this即可获得当前线程。鉴于上面分析，因此一般推荐采用实现Runnable接口、Callable接 口的方式来创建多线程。
+
+#### 线程的生命周期
+
+![](/resources/images/2020-06-05/2020-06-05-18-21-30.png)
+
+如上图所示为线程的生命周期，和操作系统中介绍的进程状态差不多。不过要注意，线程死亡状态后不能重新start，必须要重新new到新建状态才能执行。
+
+#### 控制线程
+
+- join线程：使用th.join()这样的方法可以等待th线程结束后再继续执行下面的代码。
+- 守护线程：使用th.setDaemon(true)可以设置当前线程为守护线程，当前台线程全部死亡后守护线程自动结束。
+- sleep线程睡眠：使用Thread.sleep(1000)这样的形式可以使得当前线程阻塞一定时间，传入数值为毫秒。
+- yield线程让步：Thread.yield()将处理器资源让出来给优先级相等或者更高的线程。可以用作协程。
+- 改变线程优先级：Java线程优先级是1-10（不同操作系统可能会有一点差异）。可以通过Thread.currentThread().setPriority(6)进行设置。同时也有Thread.MAX_PRIORITY、Thread.MIN_PRIORITY、Thread.NORM_PRIORITY三个等级可以进行设置。
+
+
+#### 线程同步
+
+当两个线程对同一个对象进行操作时有可能引起数据异常问题，为了解决不同线程对同一个对象的正确操作，需要进行线程同步，Java中有两个解决方案：
+
+1. 使用synchronized关键字修饰方法或者代码块
+   
+   例如：
+
+   ```java
+   public synchronized void drawAll(){
+      try{
+         if(flag){
+               System.out.println("线程："+Thread.currentThread().getName());
+               System.out.println("取钱："+balance);
+               balance=0;
+               flag = false;
+               notifyAll();
+         }
+         else{
+               wait();
+         }
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+   }
+   ```
+
+   ```java
+   synchronized (account)
+   {
+      // 账户余额大于取钱数目
+      if (account.getBalance() >= drawAmount)
+      {
+         // 吐出钞票
+         System.out.println(getName()
+            + "取钱成功！吐出钞票:" + drawAmount);
+         try
+         {
+         Thread.sleep(1);
+         }
+         catch (InterruptedException ex)
+         {
+         ex.printStackTrace();
+         }
+         // 修改余额
+         account.setBalance(account.getBalance() - drawAmount);
+         System.out.println("\t余额为: " + account.getBalance());			
+      }
+      else
+      {
+         System.out.println(getName() + "取钱失败！余额不足！");
+      }
+   }
+   ```
+2. 使用同步锁
+   
+   Java提供了多种锁的实现，线程安全控制中，使用较多时是可重入锁。
+   ```java
+   class Account{
+      private final ReentrantLock lock = new ReentrantLock();
+      private String accountNo;
+      private double balance;
+
+      public Account(String accountNo, double balance){
+         this.accountNo = accountNo;
+         this.balance = balance;
+      }
+
+      public void draw(double drawAmount){
+         lock.lock();
+
+         try{
+               if(balance >= drawAmount){
+                  System.out.println("取钱:" + drawAmount);
+                  balance -= drawAmount;
+                  System.out.println("余额:" + balance);
+               }
+               else{
+                  System.out.println("余额不足！");
+               }
+         }
+         finally {
+               lock.unlock();
+         }
+      }
+   }
+
+   public class TestLock {
+      public static void main(String[] args) {
+         Account a1 = new Account("Java", 100);
+
+         new Thread(()->a1.draw(100)).start();
+         new Thread(()->a1.draw(100)).start();
+      }
+   }
+
+   ```
+
+#### 线程通信
+
+为了保证线程协调运行，Java中提供了一些用于控制线程之间通知对方状况的方法。
+
+1. 传统synchronized修饰的方法
+
+   对于这种隐式同步方法，Java提供了三个函数可直接使用。
+
+   - wait()：当前线程进行等待，直到其他线程执行notify()或者notifyAll()或者wait中传入的时间已到则继续抢占cpu运行。
+   - notify()：随机通知一个线程进行运行。
+   - notifyAll()：通知所有阻塞线程运行。
+
+   例如：
+
+   ```java
+   class Account2{
+      private final ReentrantLock lock = new ReentrantLock();
+      private String accountNo;
+      private double balance;
+      private boolean flag = false;
+
+      public Account2(String accountNo, double balance){
+         this.accountNo = accountNo;
+         this.balance = balance;
+      }
+
+      public synchronized void drawAll(){
+         try{
+               if(flag){
+                  System.out.println("线程："+Thread.currentThread().getName());
+                  System.out.println("取钱："+balance);
+                  balance=0;
+                  flag = false;
+                  notifyAll();
+               }
+               else{
+                  wait();
+               }
+         } catch (InterruptedException e) {
+               e.printStackTrace();
+         }
+
+      }
+
+      public synchronized void deposit(double depositAmount){
+         try{
+               if(!flag){
+                  System.out.println("线程："+Thread.currentThread().getName());
+                  System.out.println("存钱："+depositAmount);
+                  balance+=depositAmount;
+                  flag = true;
+                  notifyAll();
+               }
+               else{
+                  wait();
+               }
+         } catch (InterruptedException e) {
+               e.printStackTrace();
+         }
+      }
+   }
+
+
+   public class TestCommunication {
+      public static void main(String[] args) {
+         Account2 a2 = new Account2("Java", 0);
+         new Thread(()->{
+               for (int i = 0; i < 10; i++) {
+                  a2.drawAll();
+               }
+         }, "取钱线程").start();
+
+         new Thread(()->{
+               for (int i = 100; i < 105; i++) {
+                  a2.deposit(i*0.1);
+               }
+         }, "存钱线程1").start();
+         new Thread(()->{
+               for (int i = 10000; i < 10005; i++) {
+                  a2.deposit(i*0.1);
+               }
+         }, "存钱线程2").start();
+         new Thread(()->{
+               for (int i = 20000; i < 20005; i++) {
+                  a2.deposit(i*0.1);
+               }
+         }, "存钱线程3").start();
+      }
+   }
+
+   ```
+   
+2. Lock锁实现的方法
+   
+   由于是显式的锁，因此上面提到的三种方法不可用，但是仍然有相似的三种方法：await()、signal()、signalAll()
+
+   ```java
+   // 显式定义Lock对象
+	private final Lock lock = new ReentrantLock();
+	// 获得指定Lock对象对应的Condition
+	private final Condition cond  = lock.newCondition(); 
+
+   cond.wait();
+   cond.signal();
+   cond.signalAll();
+   ```
+
+3. 使用阻塞队列
+
+   Java 5提供了一个BlockingQueue接口，虽然BlockingQueue也是Queue的子接口，但它的主要用途并不是作为容器，而是作为线程同步的工具。BlockingQueue 具有一个特征:当生产者线程试图向BlockingQueue中放入元素时，如果该队列已满，则该线程被阻塞;当消费者线程试图从BlockingQueue中取出元素时，如果该队列已空，则该线程被阻塞。程序的两个线程通过交替向BlockingQueue中放入元素、取出元素，即可很好地控制线程的通信。BlockingQueue提供如下两个支持阻塞的方法。
+
+   - put(E e):尝试把E元素放入BlockingQueue中，如果该队列的元素已满，则阻塞该线程。
+   
+   - take(): 尝试从BlockingQueue的头部取出元素，如果该队列的元素已空，则阻塞该线程。
+
+   例如：
+
+   ```java
+   class Producer extends Thread{
+      private BlockingQueue<Integer> bq;
+
+      public Producer(BlockingQueue<Integer> bq){
+         this.bq = bq;
+      }
+
+      public synchronized void run(){
+         for (int i = 0; i < 100; i++) {
+               try {
+                  bq.put(i);
+               } catch (InterruptedException e) {
+                  e.printStackTrace();
+               }
+               System.out.println(getName() + " 生产：" + i);
+         }
+      }
+   }
+
+
+   class Customer extends Thread{
+      private BlockingQueue<Integer> bq;
+
+      public Customer(BlockingQueue<Integer> bq){
+         this.bq = bq;
+      }
+
+      public synchronized void run(){
+         while (true){
+               try {
+                  int v = bq.take();
+                  System.out.println("消费：" + v);
+               } catch (InterruptedException e) {
+                  e.printStackTrace();
+               }
+         }
+      }
+   }
+
+   public class TestBlockingQueue {
+      public static void main(String[] args) {
+         BlockingQueue<Integer> bq = new ArrayBlockingQueue<>(2);
+         new Producer(bq).start();
+         new Producer(bq).start();
+
+         new Customer(bq).start();
+      }
+   }
+
+   ```
+
+#### 线程池
+
+系统启动一个新线程的成本是比较高的，因为它涉及与操作系统交互。在这种情形下，使用线程池可以很好地提高性能，尤其是当程序中需要创建大量生存期很短暂的线程时，更应该考虑使用线程池。
+
+与数据库连接池类似的是，线程池在系统启动时即创建大量空闲的线程，程序将一个Runnable对象或Callable对象传给线程池,线程池就会启动一个空闲的线程来执行它们的run)或call()方法，当run()或call()方法执行结束后，该线程并不会死亡，而是再次返回线程池中成为空闲状态，等待执行下一个Runnable对象的run()或call()方法。
+
+下面是使用线程池的一个例子：
+
+```java
+public class TestThreadPool {
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newFixedThreadPool(6);
+
+        Runnable target = ()->{
+            for (int i = 0; i < 100; i++) {
+                System.out.println(Thread.currentThread().getName() + " 的值："  + i);
+            }
+        };
+
+        pool.submit(target);
+        pool.submit(target);
+
+        pool.shutdown();
+    }
+}
+```
 
 ### 网络编程
 
+#### Java基本网络支持
+
+Java的java.net包下面提供了一些网络操作的基本包，可以通过调用他们的方法进行一些基本操作，如下：
+
+```java
+public class TestInetAddress {
+    public static void main(String[] args) throws IOException {
+        InetAddress ip = InetAddress.getByName("blog.woodcoding.com");
+        System.out.println(ip.isReachable(1000));
+        System.out.println(ip.getHostAddress());
+        System.out.println(ip.getHostName());
+        System.out.println(ip.getCanonicalHostName());
+
+        InetAddress local = InetAddress.getByAddress(new byte[]{(byte) 185, (byte) 199,109, (byte) 153});
+        System.out.println(local.isReachable(1000));
+        System.out.println(local.getHostAddress());
+        System.out.println(local.getHostName());
+        System.out.println(local.getCanonicalHostName());
+    }
+}
+```
+
+
+#### TCP通信
+
+1. TCP基本通信
+   TCP是可靠连接，通过socket可以进行tcp通信，如下是一个客户端和服务端通信的例子：
+
+   server:
+
+   ```java
+   public class Server {
+      public static void main(String[] args) throws IOException {
+         ServerSocket ss = new ServerSocket(6666);
+         while (true){
+               Socket s = ss.accept();
+               PrintStream ps = new PrintStream(s.getOutputStream());
+               ps.println("服务器连接成功!");
+               ps.println("欢迎使用!");
+               ps.close();
+               s.close();
+         }
+      }
+   }
+   ```
+
+   client:
+
+   ```java
+   public class Client {
+      public static void main(String[] args) throws IOException {
+         String  host = "127.0.0.1";
+         int port = 6666;
+         Socket socket = new Socket();
+         socket.connect(new InetSocketAddress(host, port), 10000);
+         socket.setSoTimeout(3000);
+
+         try{
+               Scanner scan = new Scanner(socket.getInputStream());
+               while (scan.hasNext()){
+                  String msg = scan.nextLine();
+                  System.out.println(msg);
+               }
+               scan.close();
+               socket.close();
+         }catch (SocketTimeoutException ex){
+               System.out.println("超时!");
+         }
+
+      }
+   }
+
+   ```
+
+2. TCP多线程通信
+   下面是一个多线程、多客户端通信的例子:
+
+   server:
+
+   ```java
+   class ServerThread implements Runnable{
+      Socket s = null;
+      BufferedReader br = null;
+      public ServerThread(Socket s){
+         System.out.println(s.getPort()+" 端口客户端已启动！");
+         try {
+               this.s = s;
+               br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+         } catch (IOException e) {
+               e.printStackTrace();
+         }
+      }
+
+      @Override
+      public void run() {
+         String msg = null;
+
+         while ((msg = readMsg())!=null){
+               System.out.println("来自 " + s.getPort() + " 的消息：" + msg);
+               for(Socket client: MyServer.socketList){
+                  try {
+                     PrintStream ps = new PrintStream(client.getOutputStream());
+                     ps.println(client.getPort() + ": " + msg);
+                  } catch (IOException e) {
+                     e.printStackTrace();
+                  }
+               }
+         }
+      }
+
+      private String readMsg(){
+         try {
+               return br.readLine();
+         } catch (IOException e) {
+               MyServer.socketList.remove(s);
+               System.out.println(s.getPort() + "已退出！");
+               e.printStackTrace();
+         }
+         return null;
+      }
+   }
+
+
+   public class MyServer {
+      public static List<Socket> socketList = Collections.synchronizedList(new ArrayList<>());
+      public static void main(String[] args) throws IOException {
+         ServerSocket ss = new ServerSocket(6666);
+         while (true){
+               Socket s = ss.accept();
+               socketList.add(s);
+               new Thread(new ServerThread(s)).start();
+         }
+      }
+   }
+   ```
+
+   client:
+
+   ```java
+   class ClientThread implements Runnable{
+
+      private Socket s;
+      BufferedReader br = null;
+
+      public ClientThread(Socket s) throws IOException {
+         this.s = s;
+         br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+      }
+
+      @Override
+      public void run() {
+         try {
+               String msg = null;
+               while ((msg = br.readLine())!=null){
+                  System.out.println(msg);
+               }
+         } catch (IOException e) {
+               e.printStackTrace();
+         }
+      }
+   }
+
+   public class MyClient {
+      public static void main(String[] args) throws IOException {
+         Socket server = new Socket("127.0.0.1", 6666);
+         new Thread(new ClientThread(server)).start();
+         String msg = null;
+         PrintStream ps = new PrintStream(server.getOutputStream());
+   //        Scanner input = new Scanner(System.in);
+         BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
+         while ((msg = br.readLine()) != null){
+   //            msg = input.nextLine();
+               ps.println(msg);
+         }
+      }
+   }
+   ```
+
+#### UDP通信
+
+UDP是不可靠的连接，尽最大努力交付，在电话、视频、直播、游戏等方面用的比较多，也可以实现消息广播。如下是一个UDP实现通信的例子：
+
+server:
+
+```java
+public class UdpServer {
+    public static final int PORT = 3000;
+    private static final int DATA_LEN = 4096;
+    byte[] inBuff = new byte[DATA_LEN];
+    private DatagramPacket inPack = new DatagramPacket(inBuff, inBuff.length);
+    private DatagramPacket outPack = null;
+
+    String[] books = new java.lang.String[]{
+            "Java",
+            "Python",
+            "C++",
+    };
+
+    public void init() throws IOException {
+        DatagramSocket socket = new DatagramSocket(PORT);
+        for (int i = 0; i < 100; i++) {
+            socket.receive(inPack);
+            System.out.println(new String(inBuff, 0, inBuff.length));
+            byte[] sendData = books[i%3].getBytes();
+            outPack = new DatagramPacket(sendData, sendData.length, inPack.getSocketAddress());
+            socket.send(outPack);
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        new UdpServer().init();
+    }
+}
+```
+
+client:
+
+```java
+public class UdpClient {
+    public static final String DEST_IP = "127.0.0.1";
+    public static final int DEST_PORT = 3000;
+    private static final int DATE_LEN = 4096;
+    byte[] inBuff = new byte[DATE_LEN];
+    private DatagramPacket inPack = new DatagramPacket(inBuff, inBuff.length);
+    private DatagramPacket outPack = null;
+
+    public void init() throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+        outPack = new DatagramPacket(new byte[0], 0, InetAddress.getByName(DEST_IP), DEST_PORT);
+        Scanner scan = new Scanner(System.in);
+        while (scan.hasNext()){
+            byte[] buff = scan.nextLine().getBytes();
+            outPack.setData(buff);
+            socket.send(outPack);
+            socket.receive(inPack);
+            System.out.println(new String(inBuff, 0, inPack.getLength()));
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        new UdpClient().init();
+    }
+}
+```
 
 参考资料：
 
 1. 疯狂Java讲义(第三版)-李刚
 2. https://www.cnblogs.com/chenglc/p/6922834.html
 3. https://www.cnblogs.com/wanlipeng/archive/2010/10/21/1857791.html
+4. https://www.cnblogs.com/guanghuiqq/p/11208809.html
